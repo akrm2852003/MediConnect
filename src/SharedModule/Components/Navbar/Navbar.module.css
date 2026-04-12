@@ -1,0 +1,100 @@
+
+:root {
+  /* Primary Blue */
+  --color-primary-dark: #052755;
+  --color-primary-dark-80: #052755A3;
+
+  /* Main Brand Colors */
+  --color-primary: #026B98;
+  --color-primary-light: #00B7EA;
+  --color-primary-cyan: #00D5FF;
+}
+
+/* ========== Navbar ========== */
+.navbar {
+  width: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  background: #ffffff;
+  border-bottom: 1px solid #e5e7eb;
+  z-index: 100;
+}
+
+/* ========== Container ========== */
+.container {
+  max-width: 1200px;
+  margin: auto;
+  padding: 14px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  
+}
+
+/* ========== Logo Section ========== */
+.logoSection {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.logo {
+  height: 70px;
+}
+
+
+.brand {
+  font-size: 27px;
+  font-weight: 800;
+
+  background: linear-gradient(to bottom, #0f172a, #00b7ea);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+
+/* ========== Menu ========== */
+.menu {
+  display: flex;
+  gap: 30px;
+  list-style: none;
+}
+
+.menu a {
+  text-decoration: none;
+  color: #026B98;
+  font-size: 20px;
+  font-weight: 700;
+  transition: 0.2s;
+}
+
+/* Hover بسيط جدًا */
+.menu a:hover {
+  color: #026b98;
+}
+
+/* ========== Button ========== */
+.btn {
+  padding: 6px 16px;
+  margin-top: 7px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  background: var(--color-primary-light);
+  font-size: 18px;
+  font-weight: 600;
+  color: white;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.btn:hover {
+  background: var(--color-primary-dark);
+}
+
+/* ========== Responsive ========== */
+@media (max-width: 768px) {
+  .menu {
+    display: none;
+  }
+}

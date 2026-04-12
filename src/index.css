@@ -1,0 +1,19 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+*{
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+:root {
+  /* Primary Blue */
+  --color-primary-dark: #052755;
+  --color-primary-dark-80: #052755A3;
+
+  /* Main Brand Colors */
+  --color-primary: #026B98;
+  --color-primary-light: #00B7EA;
+  --color-primary-cyan: #00D5FF;
+}

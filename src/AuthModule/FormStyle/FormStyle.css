@@ -1,0 +1,234 @@
+:root {
+  /* Primary Blue */
+  --color-primary-dark: #052755;
+  --color-primary-dark-80: #052755a3;
+
+  /* Main Brand Colors */
+  --color-primary: #026b98;
+  --color-primary-light: #00b7ea;
+  --color-primary-cyan: #00d5ff;
+}
+
+/* ========== General Container ========== */
+.auth-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #ffffff;
+  padding: 20px;
+}
+
+.auth-container .content {
+  width: 100%;
+}
+
+/* ========== Form Wrapper ========== */
+.form-container {
+  background: #ffffff;
+  padding: 30px 25px;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+/* ========== Logo Section ========== */
+.logo {
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.logo img {
+  width: 10%;
+  margin-right: 10px;
+}
+
+.logo h1 {
+  font-size: 35px;
+  font-weight: 700;
+  color: #026b98;
+}
+
+/* ========== Grid Layout ========== */
+form .grid {
+  display: grid;
+  gap: 18px;
+}
+
+/* ========== Labels ========== */
+label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+/* ========== Inputs Styling ========== */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+input[type="tel"] {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid #d1d5db;
+  border-radius: 10px;
+  font-size: 14px;
+  outline: none;
+  transition: all 0.2s ease-in-out;
+  background-color: #f9fafb;
+}
+
+input:focus {
+  border-color: #026b98;
+  box-shadow: 0 0 0 3px rgba(2, 107, 152, 0.15);
+  background-color: #fff;
+}
+
+/* ========== Radio Buttons ========== */
+input[type="radio"] {
+  width: 16px;
+  height: 16px;
+  accent-color: #026b98;
+  margin-right: 6px;
+}
+
+/* Gender container */
+.step2 .child {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* ========== Buttons ========== */
+button {
+  transition: all 0.2s ease-in-out;
+}
+
+button:hover {
+  transform: translateY(-1px);
+}
+
+/* Next / Back / Submit buttons */
+.step1 button,
+.step2 button {
+  border-radius: 10px;
+  font-weight: 600;
+}
+
+/* Next Button */
+.step1 button {
+  background: #026b98;
+  color: #fff;
+}
+
+.step1 button:hover {
+  background: #025577;
+}
+
+/* Back Button */
+.step2 button:first-of-type {
+  background: #e5e7eb;
+  color: #111827;
+}
+
+.step2 button:first-of-type:hover {
+  background: #d1d5db;
+}
+
+/* Submit Button */
+.step2 button[type="submit"] {
+  background: #026b98;
+  color: #fff;
+}
+
+.step2 button[type="submit"]:hover {
+  background: #025577;
+}
+
+/* ========== Input Group Wrapper ========== */
+form div {
+  position: relative;
+}
+
+/* ========== Label Cut Border Effect ========== */
+label {
+  position: absolute;
+  top: -10px;
+  left: 12px;
+  background: #ffffff; /* نفس لون الفورم */
+  padding: 0 6px;
+  font-size: 16px !important;
+  font-weight: 600;
+  color: var(--color-primary-dark);
+  z-index: 2;
+}
+
+/* ========== Input Padding Fix ========== */
+input {
+  margin-top: 20px;
+}
+
+/* ========== Input Box Enhancements ========== */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+input[type="tel"] {
+  position: relative;
+  border: 1px solid #d1d5db;
+  border-radius: 10px;
+  padding: 14px 14px 12px;
+  background: #f9fafb;
+  transition: all 0.2s ease;
+}
+
+/* Focus effect */
+input:focus {
+  border-color: #026b98;
+  box-shadow: 0 0 0 3px rgba(2, 107, 152, 0.15);
+  background: #fff;
+}
+
+.logo img {
+  animation: logoIn 0.8s ease-out;
+}
+
+@keyframes logoIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+/* ========== Responsive ========== */
+@media (max-width: 768px) {
+  .form-container {
+    padding: 20px 15px;
+  }
+
+  .logo h1 {
+    font-size: 22px;
+  }
+}
+
+.logo img {
+  animation:
+    logoIn 0.8s ease-out,
+    floatLogo 3s ease-in-out infinite 0.8s;
+}
+@keyframes floatLogo {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+
