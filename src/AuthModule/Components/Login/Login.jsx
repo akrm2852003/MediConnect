@@ -33,6 +33,7 @@ function Register() {
 
       toast.success("Register successful");
     } catch (error) {
+       navigate("/dashboard");
       toast.error(error.response.data.message, {
         autoClose: 5000,
         theme: "dark",
