@@ -6,6 +6,8 @@ import styles from "./Services.module.css";
 import Map from "./Map";
 import axios from "axios";
 import { Link } from "react-router-dom";
+import Modal from "../Popup/Popup";
+import Details from "../Details/Details";
 
 export default function Services() {
   const [mapData, setMapData] = useState([]);
@@ -13,9 +15,14 @@ export default function Services() {
   const [lng, setLng] = useState(null);
   const [totaleNumOfPages, settotaleNumOfPages] = useState(null);
   const [numOfPage, setnumOfPage] = useState(1);
+const [open, setOpen] = useState(false);
+const [selectedId, setSelectedId] = useState(null);
+
+const [loading, setLoading] = useState(false);
 
   async function fetchData() {
     try {
+          setLoading(true);
       let response = await axios.get(
         `http://65.21.174.86:5050/api/entities/nearby?lat=${lat}&lng=${lng}&subType=Pharmacies&page=${numOfPage}`,
       );
@@ -24,6 +31,7 @@ export default function Services() {
       settotaleNumOfPages(Math.ceil(response.data.totalResults / 50));
 
       setMapData(response.data.data);
+          setLoading(false);
     } catch (error) {
       console.log(error.response.data.message);
     }
@@ -74,6 +82,14 @@ export default function Services() {
     }
   }, [lat, lng, numOfPage]);
 
+   if (loading) {
+     return (
+       <div className="flex items-center justify-center h-svh">
+         <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+       </div>
+     );
+   }
+  
   return (
     <>
       <Header
@@ -162,18 +178,24 @@ export default function Services() {
                       Book Now
                     </Link>
 
-                    <Link
-                      to="/register"
-                      className="block  py-3 w-full text-center text-white bg-primaryDark hover:bg-brand-strong shadow-xs font-medium text-sm  rounded-[13px]"
+                    <button
+                      onClick={() => {
+                        setSelectedId(item.id);
+                        setOpen(true);
+                      }}
+                      className="block py-3 w-full text-center text-white bg-primaryDark hover:bg-brand-strong rounded-[13px]"
                     >
                       Details
-                    </Link>
+                    </button>
                   </div>
                 </div>
               );
             })}
           </div>
         </div>
+        <Modal isOpen={open} onClose={() => setOpen(false)}>
+          <Details id={selectedId} />
+        </Modal>
 
         <div className="flex items-center justify-center gap-3 mt-4">
           {/* Prev Button */}

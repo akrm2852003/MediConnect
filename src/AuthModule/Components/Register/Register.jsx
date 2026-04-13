@@ -39,12 +39,14 @@ function Register() {
         data,
       );
        console.log('Register successful:', response.data);
-      navigate("/verify-account");
+      navigate("/login");
       console.log(response);
 
       toast.success("Register successful");
     } catch (error) {
      
+      console.log(error);
+      
       toast.error(error.response.data.message, {
         autoClose: 5000,
         theme: "dark",

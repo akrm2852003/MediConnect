@@ -1,7 +1,8 @@
 import React from "react";
 import logo from "../../../assets/Logos/MainLogo.svg";
 import "../../FormStyle/FormStyle.css";
-
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import axios from "axios";
@@ -18,7 +19,6 @@ function Register() {
   const password = watch("password");
   let navigate = useNavigate();
   let [showPassword, setShowPassword] = useState(false);
-  let [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const onSubmit = async (data) => {
     console.log(data);
@@ -33,7 +33,6 @@ function Register() {
 
       toast.success("Register successful");
     } catch (error) {
-       navigate("/dashboard");
       toast.error(error.response.data.message, {
         autoClose: 5000,
         theme: "dark",
@@ -43,19 +42,21 @@ function Register() {
   return (
     <>
       <div className="auth-container flex align-center ">
-             <div className="m-auto w-[100%]  ">
-               <div className="content">
-                 <div className="logo flex justify-center items-center mb-3">
-                   <img src={logo} className="w-50" alt="this is logo image" />
-                   <h1 className="text-primaryLight font-bold text-5xl">
-                     MediConnect
-                   </h1>
-                 </div>
-     
-                 <div className="flex justify-center items-center flex-wrap">
-                   <div className=" form-container w-full sm:w-full md:w-10/12 lg:w-8/12 xl:w-7/12">
-                     <h1 className="text-center text-[#026B98] mb-8 font-bold text-5xl">Login</h1>
-                     <form onSubmit={handleSubmit(onSubmit)}>
+        <div className="m-auto w-[100%]  ">
+          <div className="content">
+            <div className="logo flex justify-center items-center mb-3">
+              <img src={logo} className="w-50" alt="this is logo image" />
+              <h1 className="text-primaryLight font-bold text-5xl">
+                MediConnect
+              </h1>
+            </div>
+
+            <div className="flex justify-center items-center flex-wrap">
+              <div className=" form-container w-full sm:w-full md:w-10/12 lg:w-8/12 xl:w-7/12">
+                <h1 className="text-center text-[#026B98] mb-8 font-bold text-5xl">
+                  Login
+                </h1>
+                <form onSubmit={handleSubmit(onSubmit)}>
                   <div className="  grid gap-6 mb-6 md:grid-cols-1 w-[80%] m-auto   ">
                     <div className="step1">
                       <div>
@@ -88,12 +89,22 @@ function Register() {
                           {...register("password", {
                             required: "password is required",
                           })}
-                          type="password"
+                          type={showPassword ? "text" : "password"}
                           id="password"
                           className="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2.5 shadow-xs placeholder:text-body"
                           placeholder="●●●●●●●●●●●"
                           required
                         />
+
+                        <button
+                          type="button"
+                          onClick={() => setShowPassword(!showPassword)}
+                          className="absolute right-3  top-1/2 -translate-y-1/2 text-gray-500"
+                        >
+                          <FontAwesomeIcon
+                            icon={showPassword ? faEyeSlash : faEye}
+                          />
+                        </button>
                       </div>
 
                       <div className="text-end mt-2.5">

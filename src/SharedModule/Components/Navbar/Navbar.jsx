@@ -8,10 +8,13 @@ export default function Navbar() {
     <nav className={styles.navbar}>
       <div className={styles.container}>
         {/* Logo */}
-        <div className={styles.logoSection}>
+        <Link to={'/dashboard'}>
+           <div className={`${styles.logoSection}  `}>
           <img src={logo} className={styles.logo} alt="logo" />
           <span className={styles.brand}>MediConnect</span>
         </div>
+        </Link>
+     
 
         {/* Menu */}
         <ul className={styles.menu}>
@@ -22,10 +25,10 @@ export default function Navbar() {
             <Link to="/dashboard/services">Services</Link>
           </li>
           <li>
-            <Link to="/dashboard/details">Details</Link>
+            <Link to="/dashboard/search">Search</Link>
           </li>
           <li>
-            <Link to="/dashboard/blogs">Blogs</Link>
+            <Link to="/dashboard/ai-chat">Ai Chat</Link>
           </li>
         </ul>
 

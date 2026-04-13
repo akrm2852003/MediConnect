@@ -9,7 +9,7 @@ export default function Header({ imgUrl, title1, title2, description, showConten
         </div>
 
         {showContent && (
-          <div className="header-content  text-left rounded rounded-[16px] px-[40px] py-[30px] bg-[#FFFFFF80] absolute bottom-[35%] left-[10%]   text-red">
+          <div className="header-content  text-left  rounded-[16px] px-[40px] py-[30px] bg-[#FFFFFF80] absolute bottom-[35%] left-[10%]   text-red">
             <div className="">
               <h1 className="text-primaryLight font-extrabold text-[52.19px] py-2.5">
                 {title1}

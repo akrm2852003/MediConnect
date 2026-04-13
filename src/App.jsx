@@ -19,6 +19,8 @@ import MasterLayout from "./SharedModule/Components/MasterLayout/MasterLayout";
 import Services from './DashboardModule/Components/Services/Services';
 import Details from './DashboardModule/Components/Details/Details';
 import "leaflet/dist/leaflet.css";
+import Search from './DashboardModule/Components/Search/Search';
+import AiChat from './AI_AssistantModule/Components/AiChat/AiChat';
 
 
 function App() {
@@ -47,7 +49,9 @@ function App() {
        { path: "home", element: <Home /> },
        { path: "services", element: <Services /> },
        { path: "blogs", element: <Blogs /> },
-       { path: "details", element: <Details /> },
+       { path: "details/:id", element: <Details /> },
+       { path: "search", element: <Search /> },
+       { path: "ai-chat", element: <AiChat /> },
      ],
    },
  ]);
@@ -56,6 +60,7 @@ function App() {
     <>
  
       <RouterProvider router={routes}></RouterProvider>
+      <BrowserRouter basename="/MediConnect"></BrowserRouter>
     </>
   );
 }
