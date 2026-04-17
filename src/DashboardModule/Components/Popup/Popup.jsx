@@ -15,13 +15,16 @@ export default function Modal({ isOpen, onClose, children }) {
     <AnimatePresence>
       {isOpen && (
         <motion.div
-          className="fixed inset-0 z-50 pt-[100px] flex items-center justify-center"
+          className="fixed   inset-0 z-50 pt-[100px] flex items-center justify-center"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
         >
           {/* 🔥 Overlay (clickable) */}
-          <div className="absolute inset-0 bg-black/60" onClick={onClose} />
+          <div
+            className="absolute   inset-0 bg-black/60"
+            onClick={onClose}
+          />
 
           {/* 🔥 Modal Box */}
           <motion.div
@@ -29,7 +32,7 @@ export default function Modal({ isOpen, onClose, children }) {
             animate={{ scale: 1, y: 0, opacity: 1 }}
             exit={{ scale: 0.7, y: 50, opacity: 0 }}
             transition={{ duration: 0.25 }}
-            className="relative bg-white w-[90%] max-w-5xl max-h-[90vh] overflow-y-auto rounded-xl p-5"
+            className="relative sm:h-[100vh] md:h-[85vh]  bg-white w-[90%] max-w-5xl max-h-[90vh] overflow-y-auto rounded-xl p-5"
           >
             {/* Close button */}
             <button

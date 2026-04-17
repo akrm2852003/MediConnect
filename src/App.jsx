@@ -2,7 +2,7 @@ import { useState } from 'react'
 
 import './App.css'
 import "./index.css";
-import { createBrowserRouter, RouterProvider } from 'react-router-dom'
+import { BrowserRouter, createBrowserRouter, RouterProvider } from 'react-router-dom'
 import VerifyAccount from "./AuthModule/Components/VerifyAccount/VerifyAccount";
 import AuthLayout from './SharedModule/Components/AuthLayout/AuthLayout'
 import NotFound from "./SharedModule/Components/NotFound/NotFound";
@@ -21,6 +21,7 @@ import Details from './DashboardModule/Components/Details/Details';
 import "leaflet/dist/leaflet.css";
 import Search from './DashboardModule/Components/Search/Search';
 import AiChat from './AI_AssistantModule/Components/AiChat/AiChat';
+import UserProfile from './PatientModule/Components/UserProfile/UserProfile';
 
 
 function App() {
@@ -42,7 +43,12 @@ function App() {
    },
    {
      path: "dashboard",
-     element: <MasterLayout />,
+     element: (
+       <ProtectedRoute>
+         {" "}
+         <MasterLayout />{" "}
+       </ProtectedRoute>
+     ),
      errorElement: <NotFound />,
      children: [
        { index: true, element: <Home /> },
@@ -52,6 +58,7 @@ function App() {
        { path: "details/:id", element: <Details /> },
        { path: "search", element: <Search /> },
        { path: "ai-chat", element: <AiChat /> },
+       { path: "user-profile", element: <UserProfile /> },
      ],
    },
  ]);
@@ -60,7 +67,7 @@ function App() {
     <>
  
       <RouterProvider router={routes}></RouterProvider>
-      <BrowserRouter basename="/MediConnect"></BrowserRouter>
+     
     </>
   );
 }

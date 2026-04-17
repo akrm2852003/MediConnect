@@ -92,6 +92,22 @@
   background: var(--color-primary-dark);
 }
 
+
+
+.userIcon {
+  font-size: 28px;
+  color: #333;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  transition: 0.2s;
+}
+
+.userIcon:hover {
+  color: #0d6efd;
+  transform: scale(1.1);
+}
+
 /* ========== Responsive ========== */
 @media (max-width: 768px) {
   .menu {

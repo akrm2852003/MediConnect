@@ -3,7 +3,7 @@ import React from 'react'
 export default function Header({ imgUrl, title1, title2, description, showContent = true }) {
   return (
     <>
-      <div className=" pt-[80px] header-container h-screen relative  ">
+      <div className="  header-container h-screen relative  ">
         <div className="h-full">
           <img className="w-[100%] h-full" src={imgUrl} alt="" />
         </div>

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import logo from "../../../assets/Logos/MainLogo.svg";
 import "../../FormStyle/FormStyle.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -8,8 +8,10 @@ import { useForm } from "react-hook-form";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { useState } from "react";
+import { AuthContext } from "../../../Conetxt/AuthContext/AuthContext";
 
-function Register() {
+function Login() {
+  let { saveLoginData } = useContext(AuthContext);
   let {
     register,
     handleSubmit,
@@ -27,7 +29,12 @@ function Register() {
         "http://65.21.174.86:5050/api/users/login",
         data,
       );
-      // console.log('Register successful:', response.data);
+
+      const user = response.data.data.user;
+      localStorage.setItem("token", response.data.token);
+      localStorage.setItem("user", JSON.stringify(user));
+
+      saveLoginData();
       navigate("/dashboard");
       console.log(response);
 
@@ -144,4 +151,4 @@ function Register() {
     </>
   );
 }
-export default Register;
+export default Login;

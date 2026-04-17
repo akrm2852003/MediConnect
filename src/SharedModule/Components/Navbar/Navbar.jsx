@@ -1,20 +1,24 @@
-import React from "react";
+import React, { useContext } from "react";
 import styles from "./Navbar.module.css";
 import logo from "../../../assets/Logos/MainLogo.svg";
 import { Link } from "react-router-dom";
+import { AuthContext } from "../../../Conetxt/AuthContext/AuthContext";
+import { FaUserCircle } from "react-icons/fa";
+
 
 export default function Navbar() {
+    let { logout } = useContext(AuthContext);
+
   return (
     <nav className={styles.navbar}>
       <div className={styles.container}>
         {/* Logo */}
-        <Link to={'/dashboard'}>
-           <div className={`${styles.logoSection}  `}>
-          <img src={logo} className={styles.logo} alt="logo" />
-          <span className={styles.brand}>MediConnect</span>
-        </div>
+        <Link to={"/dashboard"}>
+          <div className={styles.logoSection}>
+            <img src={logo} className={styles.logo} alt="logo" />
+            <span className={styles.brand}>MediConnect</span>
+          </div>
         </Link>
-     
 
         {/* Menu */}
         <ul className={styles.menu}>
@@ -32,10 +36,15 @@ export default function Navbar() {
           </li>
         </ul>
 
-        {/* Button */}
-        <Link to={"/register"} className={`${styles.btn} text-xl font-extrabold `}>
-          Sign in
+        {/* User Icon */}
+        <Link to="/dashboard/user-profile" className={styles.userIcon}>
+          <FaUserCircle />
         </Link>
+
+        {/* Logout */}
+        <button onClick={logout} className={styles.btn}>
+          Logout
+        </button>
       </div>
     </nav>
   );
