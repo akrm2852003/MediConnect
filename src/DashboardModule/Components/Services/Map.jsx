@@ -1,21 +1,42 @@
 import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import { useEffect, useState } from "react";
+import L from "leaflet";
 import styles from "./Services.module.css";
 
+// ======================
+// 🔥 Fix Leaflet Default Icons
+// ======================
+import markerIcon2x from "leaflet/dist/images/marker-icon-2x.png";
+import markerIcon from "leaflet/dist/images/marker-icon.png";
+import markerShadow from "leaflet/dist/images/marker-shadow.png";
+
+delete L.Icon.Default.prototype._getIconUrl;
+
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: markerIcon2x,
+  iconUrl: markerIcon,
+  shadowUrl: markerShadow,
+});
+
+// ======================
 // تحريك الخريطة
+// ======================
 function ChangeView({ center }) {
   const map = useMap();
 
   useEffect(() => {
     if (center) {
-      map.setView(center, 15); // reset zoom كل مرة
+      map.setView(center, 15);
     }
   }, [center, map]);
 
   return null;
 }
 
+// ======================
+// Component
+// ======================
 export default function Map({ data, lat, lng }) {
   const defaultCenter = [31.2784, 30.0135];
 
@@ -23,7 +44,6 @@ export default function Map({ data, lat, lng }) {
     lat && lng ? [Number(lat), Number(lng)] : defaultCenter,
   );
 
-  // 👇 أهم جزء: كل ما data تتغير نعيد ضبط الخريطة
   useEffect(() => {
     if (data && data.length > 0) {
       const firstValid = data.find((item) => item.activeLat && item.activeLng);
@@ -48,10 +68,8 @@ export default function Map({ data, lat, lng }) {
       >
         <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
 
-        {/* يتحرك كل مرة center يتغير */}
         <ChangeView center={center} />
 
-        {/* markers بتتحدث تلقائي */}
         {data &&
           data
             .filter((item) => item.activeLat && item.activeLng)
