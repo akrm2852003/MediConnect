@@ -15,6 +15,7 @@ function Login() {
   let {
     register,
     handleSubmit,
+
     formState: { errors },
     watch,
   } = useForm({ mode: "onChange" });
@@ -29,8 +30,9 @@ function Login() {
         "https://mediconnect-api.online/api/users/login",
         data,
       );
-
       const user = response.data.data.user;
+      
+
       localStorage.setItem("token", response.data.token);
       localStorage.setItem("user", JSON.stringify(user));
 
