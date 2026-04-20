@@ -22,6 +22,7 @@ import "leaflet/dist/leaflet.css";
 import Search from './DashboardModule/Components/Search/Search';
 import AiChat from './AI_AssistantModule/Components/AiChat/AiChat';
 import UserProfile from './PatientModule/Components/UserProfile/UserProfile';
+import Appointment from './PatientModule/Components/Appointment/Appointment';
 
 
 function App() {
@@ -59,6 +60,7 @@ function App() {
        { path: "search", element: <Search /> },
        { path: "ai-chat", element: <AiChat /> },
        { path: "user-profile", element: <UserProfile /> },
+       { path: "appointment/:id", element: <Appointment /> },
      ],
    },
  ]);

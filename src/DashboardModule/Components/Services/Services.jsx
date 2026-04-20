@@ -139,7 +139,7 @@ export default function Services() {
                     {/* BUTTONS */}
                     <div className=" flex-1 flex flex-col justify-center gap-2 px-3">
                       <Link
-                        to="/register"
+                        to={`/dashboard/appointment/${item.id}`}
                         className="block  py-3 w-full text-center text-white bg-primaryLight hover:bg-brand-strong shadow-xs font-medium text-sm  rounded-[13px]"
                       >
                         Book Now
