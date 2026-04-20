@@ -14,7 +14,7 @@ export default function slider({ setSelectedType, selectedType }) {
   async function uniqueFilters() {
     try {
       let response = await axios.get(
-        `http://65.21.174.86:5050/api/entities/unique-filters`,
+        `https://mediconnect-api.online/api/entities/unique-filters`,
       );
 
       let data = response.data.data;

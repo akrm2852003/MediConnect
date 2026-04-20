@@ -31,13 +31,13 @@ export default function Services() {
       setLoading(true);
       console.log("selectedType:", selectedType);
       let response = await axios.get(
-        "http://65.21.174.86:5050/api/entities/nearby",
+        "https://mediconnect-api.online/api/entities/nearby",
         {
           params: {
             lat,
             lng,
             subType: selectedType,
-            page: numOfPage-1,
+            page: numOfPage - 1,
           },
         },
       );
@@ -91,7 +91,7 @@ export default function Services() {
           <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
         </div>
       ) : (
-        <div className="container  m-auto mb-12 mt-14">
+        <div className="container   m-auto mb-12 mt-14">
           <h1 className="text-primaryLight font-bold text-[52.19px] pb-[30px]  ">
             Explore
           </h1>

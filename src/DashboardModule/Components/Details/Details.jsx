@@ -16,7 +16,7 @@ export default function Details({ id }) {
     try {
           setLoading(true);
       let response = await axios.get(
-        `http://65.21.174.86:5050/api/entities/${id}`,
+        `https://mediconnect-api.online/api/entities/${id}`,
       );
 
       console.log(response.data.data);

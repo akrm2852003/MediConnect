@@ -48,15 +48,15 @@
   width: 65%; /* أقل من الأول */
   max-width: 280px; /* مهم جدًا */
   height: 100vh;
-  background: linear-gradient(180deg, #026b98, #014a6b);
+  background: white;
   transition: 0.4s ease;
   padding: 20px;
   z-index: 1000;
-  color: white;
+  color: #052755;
 
   /* ✨ شكل احترافي */
-  border-top-right-radius: 20px;
-  border-bottom-right-radius: 20px;
+  border-top-right-radius: 30px;
+
 }
 
 /* open */
@@ -91,7 +91,7 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  color: white;
+  color: #052755;
   text-decoration: none;
   font-size: 17px;
   font-weight: 500;
@@ -107,7 +107,8 @@
 /* hover */
 .sidebar a:hover,
 .sidebar button:hover {
-  background: rgba(255, 255, 255, 0.15);
+  background: rgba(5, 39, 85, 1);
+  color : white
 }
 
 /* icons */

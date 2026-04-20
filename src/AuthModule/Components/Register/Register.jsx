@@ -35,7 +35,7 @@ function Register() {
     console.log(data);
     try {
       const response = await axios.post(
-        "http://65.21.174.86:5050/api/users/register",
+        "https://mediconnect-api.online/api/users/register",
         data,
       );
        console.log('Register successful:', response.data);

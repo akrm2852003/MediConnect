@@ -26,7 +26,7 @@ function Login() {
     console.log(data);
     try {
       const response = await axios.post(
-        "http://65.21.174.86:5050/api/users/login",
+        "https://mediconnect-api.online/api/users/login",
         data,
       );
 
