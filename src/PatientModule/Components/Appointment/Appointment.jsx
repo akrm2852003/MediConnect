@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useMemo, useEffect, useState } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 import styles from "./Appointment.module.css";
@@ -34,11 +34,27 @@ export default function Appointment() {
     }
   }
 
+  async function createBooking(id, selectedDate, selectedTime) {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await axios.post(
+        `https://mediconnect-api.online/api/bookings`,
+        { entityId: id, date: selectedDate, time: selectedTime },
+        { headers: { Authorization: `Bearer ${token}` } },
+      );
+      console.log(response);
+    } catch (error) {
+      console.log("status:", error.response?.status);
+      console.log("data:", error.response?.data);
+    }
+  }
+
   useEffect(() => {
     if (id) fetchDetails(id);
   }, [id]);
 
   const schedule = details?.schedule || [];
+
   const scheduleDates = useMemo(
     () => new Set(schedule.map((d) => d.date)),
     [schedule],
@@ -63,6 +79,7 @@ export default function Appointment() {
     "November",
     "December",
   ];
+
   const DOWS = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"];
 
   function toDateStr(y, m, d) {
@@ -80,14 +97,18 @@ export default function Appointment() {
     if (viewMonth === 0) {
       setViewMonth(11);
       setViewYear((y) => y - 1);
-    } else setViewMonth((m) => m - 1);
+    } else {
+      setViewMonth((m) => m - 1);
+    }
   }
 
   function nextMonth() {
     if (viewMonth === 11) {
       setViewMonth(0);
       setViewYear((y) => y + 1);
-    } else setViewMonth((m) => m + 1);
+    } else {
+      setViewMonth((m) => m + 1);
+    }
   }
 
   const calendarDays = useMemo(() => {
@@ -115,85 +136,95 @@ export default function Appointment() {
 
   return (
     <div className={styles.screen}>
+      {/* ===== Header ===== */}
       <div className={styles.header}>
         <button className={styles.backBtn}>&#8592;</button>
         <span className={styles.headerTitle}>Appointment</span>
       </div>
 
-      <div className={styles.section}>
-        <div className={styles.sectionLabel}>Date</div>
-        <div className={styles.calHeader}>
-          <span className={styles.calMonth}>
-            {MONTHS[viewMonth]} {viewYear}
-          </span>
-          <div>
-            <button className={styles.calNav} onClick={prevMonth}>
-              &#8249;
-            </button>
-            <button className={styles.calNav} onClick={nextMonth}>
-              &#8250;
-            </button>
+      {/* ===== Body Grid ===== */}
+      <div className={styles.body}>
+        {/* Calendar Section */}
+        <div className={styles.calSection}>
+          <div className={styles.sectionLabel}>Date</div>
+
+          <div className={styles.calHeader}>
+            <span className={styles.calMonth}>
+              {MONTHS[viewMonth]} {viewYear}
+            </span>
+            <div>
+              <button className={styles.calNav} onClick={prevMonth}>
+                &#8249;
+              </button>
+              <button className={styles.calNav} onClick={nextMonth}>
+                &#8250;
+              </button>
+            </div>
+          </div>
+
+          <div className={styles.calGrid}>
+            {DOWS.map((d) => (
+              <div key={d} className={styles.calDow}>
+                {d}
+              </div>
+            ))}
+            {calendarDays.map((cell, i) => (
+              <div
+                key={i}
+                onClick={() => {
+                  if (cell.type === "active") {
+                    setSelectedDate(cell.date);
+                    setSelectedTime(null);
+                  }
+                }}
+                className={[
+                  styles.calDay,
+                  cell.type === "prev" ? styles.calOther : "",
+                  cell.type === "active" ? styles.calActive : "",
+                  cell.date === selectedDate ? styles.calSelected : "",
+                ].join(" ")}
+              >
+                {cell.day}
+              </div>
+            ))}
           </div>
         </div>
-        <div className={styles.calGrid}>
-          {DOWS.map((d) => (
-            <div key={d} className={styles.calDow}>
-              {d}
-            </div>
-          ))}
-          {calendarDays.map((cell, i) => (
-            <div
-              key={i}
-              onClick={() => {
-                if (cell.type === "active") {
-                  setSelectedDate(cell.date);
-                  setSelectedTime(null);
-                }
-              }}
-              className={[
-                styles.calDay,
-                cell.type === "prev" ? styles.calOther : "",
-                cell.type === "active" ? styles.calActive : "",
-                cell.date === selectedDate ? styles.calSelected : "",
-              ].join(" ")}
-            >
-              {cell.day}
-            </div>
-          ))}
+
+        {/* Slots Section */}
+        <div className={styles.slotsSection}>
+          <div className={styles.sectionLabel}>Available Time</div>
+          <div className={styles.timeGrid}>
+            {selectedDay?.slots.map((slot, i) => (
+              <button
+                key={i}
+                disabled={slot.booked}
+                onClick={() => !slot.booked && setSelectedTime(slot.time)}
+                className={[
+                  styles.timeSlot,
+                  slot.booked ? styles.slotBooked : styles.slotAvailable,
+                  selectedTime === slot.time ? styles.slotSelected : "",
+                ].join(" ")}
+              >
+                {formatTime(slot.time)}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Footer */}
+        <div className={styles.footerBar}>
+          <button
+            className={styles.continueBtn}
+            onClick={() => {
+              if (selectedDate && selectedTime) {
+                createBooking(id, selectedDate, selectedTime);
+              }
+            }}
+          >
+            Continue
+          </button>
         </div>
       </div>
-
-      <div className={styles.divider} />
-
-      <div className={styles.section}>
-        <div className={styles.sectionLabel}>Available Time</div>
-        <div className={styles.timeGrid}>
-          {selectedDay?.slots.map((slot, i) => (
-            <button
-              key={i}
-              disabled={slot.booked}
-              onClick={() => !slot.booked && setSelectedTime(slot.time)}
-              className={[
-                styles.timeSlot,
-                slot.booked ? styles.slotBooked : styles.slotAvailable,
-                selectedTime === slot.time ? styles.slotSelected : "",
-              ].join(" ")}
-            >
-              {formatTime(slot.time)}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      <button
-        className={styles.continueBtn}
-        onClick={() => {
-          if (selectedTime)
-            console.log({ date: selectedDate, time: selectedTime });
-        }}
-      >
-        Continue
-      </button>
     </div>
   );
 }

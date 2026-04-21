@@ -3,5 +3,16 @@ import react from "@vitejs/plugin-react";
 
 export default defineConfig({
   plugins: [react()],
-  base: "/", // 🔥 دي أهم سطر
+
+  base: "/",
+
+  server: {
+    proxy: {
+      "/api": {
+        target: "https://mediconnect-api.online",
+        changeOrigin: true,
+        secure: false,
+      },
+    },
+  },
 });

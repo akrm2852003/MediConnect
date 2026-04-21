@@ -23,7 +23,7 @@ export default function slider({ setSelectedType, selectedType }) {
       setGovernorates(response.data.data.governorates);
       setAreas(response.data.data.areas);
 
-      console.log(data);
+   
     } catch (error) {
       console.log(error);
     }
