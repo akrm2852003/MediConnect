@@ -23,6 +23,8 @@ import Search from './DashboardModule/Components/Search/Search';
 import AiChat from './AI_AssistantModule/Components/AiChat/AiChat';
 import UserProfile from './PatientModule/Components/UserProfile/UserProfile';
 import Appointment from './PatientModule/Components/Appointment/Appointment';
+import { ToastContainer } from 'react-toastify';
+import UserBooking from './PatientModule/Components/UserBooking/UserBooking';
 
 
 function App() {
@@ -61,15 +63,15 @@ function App() {
        { path: "ai-chat", element: <AiChat /> },
        { path: "user-profile", element: <UserProfile /> },
        { path: "appointment/:id", element: <Appointment /> },
+       { path: "user-bookings", element: <UserBooking /> },
      ],
    },
  ]);
 
   return (
     <>
- 
       <RouterProvider router={routes}></RouterProvider>
-     
+      <ToastContainer position="top-center" />
     </>
   );
 }

@@ -2,6 +2,7 @@ import React, { useMemo, useEffect, useState } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 import styles from "./Appointment.module.css";
+import { toast } from "react-toastify";
 
 export default function Appointment() {
   const { id } = useParams();
@@ -43,9 +44,17 @@ export default function Appointment() {
         { headers: { Authorization: `Bearer ${token}` } },
       );
       console.log(response);
+            toast.success(response.data.message, {
+        autoClose: 5000,
+        theme: "light",
+      });
     } catch (error) {
       console.log("status:", error.response?.status);
       console.log("data:", error.response?.data);
+      toast.error(error.response?.data?.message || "Booking failed", {
+        autoClose: 5000,
+        theme: "dark",
+      });
     }
   }
 
@@ -221,7 +230,7 @@ export default function Appointment() {
               }
             }}
           >
-            Continue
+            Confirm
           </button>
         </div>
       </div>

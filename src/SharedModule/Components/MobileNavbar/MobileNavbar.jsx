@@ -23,10 +23,10 @@ export default function MobileNavbar() {
       {!open && (
         <button className={styles.floatingBtn} onClick={() => setOpen(true)}>
             
-          <img className={styles.iconImg} src={logo} alt="" />
+               <FaBars />
+
         </button>
       )}
-      {/* <FaBars /> */}
       {/* Overlay */}
       {open && (
         <div className={styles.overlay} onClick={() => setOpen(false)}></div>

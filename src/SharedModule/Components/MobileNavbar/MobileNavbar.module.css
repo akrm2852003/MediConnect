@@ -1,36 +1,39 @@
 .floatingBtn {
   position: fixed;
-  top: 30px;
+  top: 20px;
   right: 20px;
-  width: 50px;
-  height: 50px;
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
-  border: none;
-  padding: 0;
 
-  overflow: hidden;
-  cursor: pointer;
+  width: 56px;
+  height: 56px;
+
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+
+  background: #052755;
+  color: white;
 
   display: flex;
   align-items: center;
   justify-content: center;
 
-  z-index: 1000; /* مهم جدًا */
+  cursor: pointer;
+
+  z-index: 1000;
+
+  /* ✨ شكل احترافي */
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
+  backdrop-filter: blur(10px);
+
+  transition: all 0.25s ease;
 }
 
-.iconImg {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-
-  pointer-events: auto; /* تأكيد */
-}
 .floatingBtn:hover {
-  transform: scale(1.1);
+  transform: scale(1.08);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.35);
 }
-
+.floatingBtn:active {
+  transform: scale(0.95);
+}
 /* Overlay */
 .overlay {
   position: fixed;
