@@ -144,7 +144,7 @@ export default function Appointment() {
   if (!details || viewYear === null) return null;
 
   return (
-    <div className={styles.screen}>
+    <div className={`${styles.screen} `}>
       {/* ===== Header ===== */}
       <div className={styles.header}>
         <button className={styles.backBtn}>&#8592;</button>

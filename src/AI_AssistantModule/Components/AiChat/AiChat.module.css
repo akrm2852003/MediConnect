@@ -1,0 +1,352 @@
+/* ============================================
+   AiChat.module.css — Professional Medical AI Chat
+   ============================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+/* ── Navbar height token — change once here if navbar height changes ── */
+:root {
+  --navbar-h: 70px; /* matches logo 70px + padding 14px × 2 */
+}
+
+/* ── Root layout ─────────────────────────────── */
+.pageWrapper {
+  display: flex;
+  /* sits below the fixed navbar */
+  height: calc(100vh - var(--navbar-h));
+  margin-top: var(--navbar-h);
+  overflow: hidden;
+  background: #f0f4f9;
+  font-family: 'Sora', sans-serif;
+  position: relative;
+}
+
+/* ── Sidebar wrapper ──────────────────────────── */
+.sidebarWrapper {
+  width: 280px;
+  flex-shrink: 0;
+  /* fills only the remaining space below navbar */
+  height: calc(100vh - var(--navbar-h));
+  overflow: hidden;
+  transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 99; /* below navbar (100) so it never covers it */
+}
+
+/* ── Main chat area ───────────────────────────── */
+.chatMain {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - var(--navbar-h));
+  overflow: hidden;
+  min-width: 0;
+}
+
+/* ── Mobile floating sidebar toggle (visible only on mobile) ── */
+.mobileSidebarToggle {
+  display: none;
+  position: fixed;
+  bottom: 88px;           /* above the chat input bar */
+  left: 16px;
+  z-index: 98;            /* below navbar (100) and sidebar (99) */
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: #052755;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 18px rgba(5, 39, 85, 0.4);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.mobileSidebarToggle:hover {
+  transform: scale(1.08);
+  box-shadow: 0 6px 22px rgba(5, 39, 85, 0.5);
+}
+
+/* ── Chat container (fills remaining height) ─── */
+.chatContainer {
+  flex: 1;
+  overflow: hidden;
+  padding:0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Override chatscope MainContainer ─────────── */
+.mainContainer {
+  height: 100% !important;
+  border: none !important;
+  background: transparent !important;
+}
+
+/* ── Chatscope deep overrides via :global ──────── */
+:global(.cs-main-container) {
+  background: transparent !important;
+  border: none !important;
+  height: 100% !important;
+}
+
+:global(.cs-chat-container) {
+  background: transparent !important;
+  height: 100% !important;
+}
+
+:global(.cs-message-list) {
+  background: #f0f4f9 !important;
+  padding: 24px 20px 12px !important;
+}
+
+:global(.cs-message-list__scroll-wrapper) {
+  padding: 0 !important;
+}
+
+/* ── Message row wrappers — control max-width here ── */
+:global(.cs-message--outgoing),
+:global(.cs-message--incoming) {
+  max-width: 72% !important;
+  width: auto !important;
+}
+
+/* Outgoing (user) messages */
+:global(.cs-message--outgoing .cs-message__content) {
+  background: linear-gradient(135deg, #052755 0%, #026B98 100%) !important;
+  color: #fff !important;
+  border-radius: 20px 20px 4px 20px !important;
+  padding: 12px 18px !important;
+  font-family: 'Sora', sans-serif !important;
+  font-size: 14.5px !important;
+  line-height: 1.6 !important;
+  box-shadow: 0 4px 16px rgba(5, 39, 85, 0.25) !important;
+  /* let the wrapper control width */
+
+  box-sizing: border-box !important;
+  word-break: break-word !important;
+  white-space: normal !important;
+}
+
+/* Incoming (bot) messages */
+:global(.cs-message--incoming .cs-message__content) {
+  background: #fff !important;
+  color: #1e293b !important;
+  border-radius: 20px 20px 20px 4px !important;
+  padding: 12px 18px !important;
+  font-family: 'Sora', sans-serif !important;
+  font-size: 14.5px !important;
+  line-height: 1.6 !important;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08) !important;
+  border: 1px solid #e2e8f0 !important;
+
+
+  box-sizing: border-box !important;
+  word-break: break-word !important;
+  white-space: pre-wrap !important;
+}
+
+/* Content-editor inside the bubble (chatscope wraps text here) */
+:global(.cs-message__content-wrapper) {
+
+ width: auto !important;
+
+  overflow: hidden !important;
+}
+
+
+/* Hide avatar labels */
+:global(.cs-message__sender-name) {
+  display: none !important;
+}
+
+/* ── Message input bar ────────────────────────── */
+:global(.cs-message-input) {
+  background: #fff !important;
+  border-top: 1px solid #e2e8f0 !important;
+  padding: 12px 16px !important;
+}
+
+:global(.cs-message-input__content-editor-wrapper) {
+  background: #f8fafc !important;
+  border: 1.5px solid #cbd5e1 !important;
+  border-radius: 14px !important;
+  padding: 10px 16px !important;
+  transition: border-color 0.2s !important;
+}
+
+:global(.cs-message-input__content-editor-wrapper:focus-within) {
+  border-color: #00B7EA !important;
+  box-shadow: 0 0 0 3px rgba(0, 183, 234, 0.15) !important;
+}
+
+:global(.cs-message-input__content-editor) {
+  font-family: 'Sora', sans-serif !important;
+  font-size: 14px !important;
+  color: #1e293b !important;
+
+}
+
+:global(.cs-button--send) {
+  background: linear-gradient(135deg, #052755, #026B98) !important;
+  border-radius: 12px !important;
+  width: 40px !important;
+  height: 40px !important;
+  color: white !important;
+  border: none !important;
+  transition: transform 0.2s, box-shadow 0.2s !important;
+  flex-shrink: 0 !important;
+}
+
+:global(.cs-button--send:hover) {
+  transform: scale(1.06) !important;
+  box-shadow: 0 4px 14px rgba(5, 39, 85, 0.35) !important;
+}
+
+/* ── Empty state ──────────────────────────────── */
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 20px 40px;
+  text-align: center;
+  animation: fadeUp 0.5s ease both;
+}
+
+.emptyIcon {
+  font-size: 48px;
+  color: #00B7EA;
+  margin-bottom: 20px;
+  animation: pulse 2.4s ease-in-out infinite;
+}
+
+.emptyTitle {
+  font-size: 22px;
+  font-weight: 700;
+  color: #052755;
+  margin: 0 0 10px;
+}
+
+.emptySubtitle {
+  font-size: 14px;
+  color: #052755A3;
+  max-width: 340px;
+  line-height: 1.7;
+}
+
+/* ── Mobile overlay ───────────────────────────── */
+.overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(5, 39, 85, 0.5);
+  backdrop-filter: blur(2px);
+  z-index: 150;
+  animation: fadeIn 0.25s ease;
+}
+
+/* ── Animations ───────────────────────────────── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50%       { transform: scale(1.12); opacity: 0.8; }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+
+/* Tablet (≤ 1024px) — sidebar slightly narrower */
+@media (max-width: 1024px) {
+  .sidebarWrapper {
+    width: 240px;
+  }
+}
+
+/* Mobile (≤ 768px) — sidebar slides in as drawer */
+@media (max-width: 768px) {
+  /* MobileNavbar is shorter on small screens */
+  :root { --navbar-h: 70px; }
+
+  .sidebarWrapper {
+    position: fixed;
+    top: var(--navbar-h);      /* starts below navbar, never covers it */
+    left: 0;
+    height: calc(100vh - var(--navbar-h));
+    width: 280px;
+    transform: translateX(-100%);
+    box-shadow: 6px 0 32px rgba(5, 39, 85, 0.18);
+    z-index: 99;               /* navbar is z-index:100, sidebar stays under */
+  }
+
+  .sidebarOpen {
+    transform: translateX(0);
+  }
+
+  .overlay {
+    display: block;
+    top: var(--navbar-h);
+    height: calc(100vh - var(--navbar-h));
+  }
+
+  .mobileTopBar {
+    display: none; /* app already has its own MobileNavbar */
+  }
+
+  .chatMain {
+    height: calc(100vh - var(--navbar-h));
+  }
+
+  :global(.cs-message--outgoing .cs-message__content),
+  :global(.cs-message--incoming .cs-message__content) {
+    max-width: 85% !important;
+    font-size: 14px !important;
+  }
+}
+
+
+@media (max-width: 1024px) {
+  :root {
+    --navbar-h: 0px;
+  }
+}
+
+/* Show floating toggle on mobile */
+@media (max-width: 768px) {
+  .mobileSidebarToggle {
+    display: flex;
+  }
+}
+
+/* Small mobile (≤ 480px) */
+@media (max-width: 480px) {
+  .sidebarWrapper {
+    width: 100vw;
+  }
+
+  :global(.cs-message-list) {
+    padding: 16px 12px 8px !important;
+  }
+
+  :global(.cs-message-input) {
+    padding: 10px 12px !important;
+  }
+
+  .emptyTitle {
+    font-size: 18px;
+  }
+
+  .emptySubtitle {
+    font-size: 13px;
+  }
+}

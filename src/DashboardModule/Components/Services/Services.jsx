@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import img from "../../../assets/images/HeaderImg/Services-Header.png";
 import Header from "../../../SharedModule/Components/Header/Header";
 import Map from "./Map";
@@ -20,6 +20,7 @@ import {
   FaBaby,
   FaBone,
 } from "react-icons/fa";
+import { LocationContext } from "../../../Conetxt/LocationContext/LocationContext";
 
 /* =========================
    SUBTYPE CONFIG
@@ -95,14 +96,14 @@ function getSubTypeUI(subType) {
 ========================= */
 export default function Services() {
   const [mapData, setMapData] = useState([]);
-  const [lat, setLat] = useState(null);
-  const [lng, setLng] = useState(null);
   const [totaleNumOfPages, setTotaleNumOfPages] = useState(null);
   const [numOfPage, setNumOfPage] = useState(1);
   const [open, setOpen] = useState(false);
   const [selectedId, setSelectedId] = useState(null);
   const [selectedType, setSelectedType] = useState(null);
   const [loading, setLoading] = useState(false);
+
+   const { lat, lng } = useContext(LocationContext);
 
   async function fetchData(lat, lng, numOfPage, selectedType) {
     try {
@@ -130,19 +131,46 @@ export default function Services() {
     }
   }
 
-  function userLocation() {
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        setLat(position.coords.latitude);
-        setLng(position.coords.longitude);
-      },
-      (err) => console.log(err.message),
-    );
-  }
+  // async function filterData(governorate, subType, area) {
+  //   try {
+  //     setLoading(true);
 
-  useEffect(() => {
-    userLocation();
-  }, []);
+  //     const response = await axios.get(
+  //       "https://mediconnect-api.online/api/entities/filter",
+  //       {
+  //         params: {
+  //           governorate,
+  //           subType,
+  //           area,
+  //         },
+  //       },
+  //     );
+
+  //     setMapData(response.data.data);
+
+  //     setLoading(false);
+  //   } catch (error) {
+  //     console.log(error?.response?.data?.message);
+  //     setLoading(false);
+  //   }
+  // }
+
+
+
+
+  // function userLocation() {
+  //   navigator.geolocation.getCurrentPosition(
+  //     (position) => {
+  //       setLat(position.coords.latitude);
+  //       setLng(position.coords.longitude);
+  //     },
+  //     (err) => console.log(err.message),
+  //   );
+  // }
+
+  // useEffect(() => {
+  //   userLocation();
+  // }, []);
 
   useEffect(() => {
     if (lat && lng) {
@@ -196,88 +224,88 @@ export default function Services() {
                 const ui = getSubTypeUI(item.subType);
                 const Icon = ui.icon;
 
-           return (
-             <div
-               key={i}
-               className="group bg-white rounded-2xl overflow-hidden shadow-md border border-gray-100
+                return (
+                  <div
+                    key={i}
+                    className="group bg-white rounded-2xl overflow-hidden shadow-md border border-gray-100
     hover:shadow-xl hover:-translate-y-2 transition-all duration-300 flex flex-col"
-             >
-               {/* ICON AREA */}
-               <div
-                 className={`relative h-48 flex items-center justify-center bg-gradient-to-br ${ui.bg}`}
-               >
-                 {/* MAIN ICON */}
-                 <Icon
-                   className={`text-6xl ${ui.color} drop-shadow-sm group-hover:scale-110 transition-transform duration-300`}
-                 />
+                  >
+                    {/* ICON AREA */}
+                    <div
+                      className={`relative h-48 flex items-center justify-center bg-gradient-to-br ${ui.bg}`}
+                    >
+                      {/* MAIN ICON */}
+                      <Icon
+                        className={`text-6xl ${ui.color} drop-shadow-sm group-hover:scale-110 transition-transform duration-300`}
+                      />
 
-                 {/* ================= BADGES CONTAINER ================= */}
-                 <div className="absolute top-3 left-3 right-3 flex justify-between items-start gap-2">
-                   {/* SUBTYPE BADGE */}
-                   <div
-                     className="max-w-[70%] bg-white px-3 py-1 rounded-full 
+                      {/* ================= BADGES CONTAINER ================= */}
+                      <div className="absolute top-3 left-3 right-3 flex justify-between items-start gap-2">
+                        {/* SUBTYPE BADGE */}
+                        <div
+                          className="max-w-[70%] bg-white px-3 py-1 rounded-full 
           text-xs flex items-center gap-1 
           shadow-md border border-gray-200"
-                   >
-                     <Icon className={ui.color} />
+                        >
+                          <Icon className={ui.color} />
 
-                     <span className="font-medium text-gray-800 truncate">
-                       {item.subType}
-                     </span>
-                   </div>
+                          <span className="font-medium text-gray-800 truncate">
+                            {item.subType}
+                          </span>
+                        </div>
 
-                   {/* DISTANCE BADGE */}
-                   <div
-                     className="bg-primaryDark text-white 
+                        {/* DISTANCE BADGE */}
+                        <div
+                          className="bg-primaryDark text-white 
           text-xs px-3 py-1 rounded-full 
           font-semibold shadow-md shrink-0"
-                   >
-                     {item.distance.toFixed(1)} km
-                   </div>
-                 </div>
-               </div>
+                        >
+                          {item.distance.toFixed(1)} km
+                        </div>
+                      </div>
+                    </div>
 
-               {/* CONTENT */}
-               <div className="p-4 text-center flex flex-col flex-1">
-                 {/* NAME */}
-                 <h3 className="text-lg font-bold text-gray-800 line-clamp-1">
-                   {item.name}
-                 </h3>
+                    {/* CONTENT */}
+                    <div className="p-4 text-center flex flex-col flex-1">
+                      {/* NAME */}
+                      <h3 className="text-lg font-bold text-gray-800 line-clamp-1">
+                        {item.name}
+                      </h3>
 
-                 {/* LOCATION */}
-                 <p className="text-sm text-gray-500 line-clamp-1">
-                   {item.area} - {item.governorate}
-                 </p>
+                      {/* LOCATION */}
+                      <p className="text-sm text-gray-500 line-clamp-1">
+                        {item.area} - {item.governorate}
+                      </p>
 
-                 {/* PHONE */}
-                 {item.phoneNumbers?.[0] && (
-                   <p className="text-sm text-gray-600 mt-1">
-                     📞 {item.phoneNumbers[0]}
-                   </p>
-                 )}
+                      {/* PHONE */}
+                      {item.phoneNumbers?.[0] && (
+                        <p className="text-sm text-gray-600 mt-1">
+                          📞 {item.phoneNumbers[0]}
+                        </p>
+                      )}
 
-                 {/* BUTTONS */}
-                 <div className="mt-auto flex flex-col gap-2 pt-4">
-                   <Link
-                     to={`/dashboard/appointment/${item.id}`}
-                     className="w-full text-center bg-primaryLight text-white py-2 rounded-xl hover:bg-primaryDark transition font-medium"
-                   >
-                     Book Now
-                   </Link>
+                      {/* BUTTONS */}
+                      <div className="mt-auto flex flex-col gap-2 pt-4">
+                        <Link
+                          to={`/dashboard/appointment/${item.id}`}
+                          className="w-full text-center bg-primaryLight text-white py-2 rounded-xl hover:bg-primaryDark transition font-medium"
+                        >
+                          Book Now
+                        </Link>
 
-                   <button
-                     onClick={() => {
-                       setSelectedId(item.id);
-                       setOpen(true);
-                     }}
-                     className="w-full bg-gray-100 text-gray-700 py-2 rounded-xl hover:bg-gray-200 transition font-medium"
-                   >
-                     Details
-                   </button>
-                 </div>
-               </div>
-             </div>
-           );
+                        <button
+                          onClick={() => {
+                            setSelectedId(item.id);
+                            setOpen(true);
+                          }}
+                          className="w-full bg-gray-100 text-gray-700 py-2 rounded-xl hover:bg-gray-200 transition font-medium"
+                        >
+                          Details
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                );
               })}
             </div>
           </div>

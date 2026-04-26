@@ -184,7 +184,7 @@ if (loading) {
                       className={`text-sm px-3 py-1.5 rounded-lg text-white transition ${
                         deletingId === booking.id || isCancelled
                           ? "bg-red-300 cursor-not-allowed"
-                          : "bg-red-600 hover:bg-red-700"
+                          : "bg-primaryDark hover:bg-primaryDark80"
                       }`}
                     >
                       {deletingId === booking.id ? "Cancelling..." : "Cancel"}
