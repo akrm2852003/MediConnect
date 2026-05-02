@@ -49,9 +49,7 @@ export default function Home() {
       />
 
       <div className="container m-auto">
-        <div className="block rounded-[13px] w-[100%] m-auto my-[50px] text-white bg-primaryLight hover:bg-primaryDark text-xl font-bold py-4 py-2.5">
-      
-        </div>
+       
 
         {/* Values */}
         <div className="our-values">

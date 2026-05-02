@@ -194,7 +194,7 @@ export default function Services() {
           ))}
         </div>
       ) : (
-        <div className="container m-auto mb-12 sm:mt-[150px] md:mt-[250px] lg:mt-5">
+        <div className="container m-auto mb-12 sm:mt-[110px] lg:mt-5">
           {/* TITLE */}
           <h1 className="text-primaryLight font-bold text-[52px] pb-[30px]">
             {t("explore")}
