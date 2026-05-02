@@ -11,7 +11,11 @@
   },
   "dependencies": {
     "@chatscope/chat-ui-kit-react": "^2.1.1",
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.1",
     "@fortawesome/fontawesome-free": "^7.2.0",
+    "@mui/icons-material": "^9.0.0",
+    "@mui/material": "^9.0.0",
     "ag-charts": "^0.0.1",
     "ag-charts-react": "^13.2.1",
     "axios": "^1.14.0",

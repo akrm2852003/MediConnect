@@ -116,5 +116,8 @@
   "Th": "Th",
   "Fr": "Fr",
   "Sa": "Sa",
-  "Su": "Su"
+  "Su": "Su",
+  "ai": {
+    "ask_ai": "Ask AI Assistant"
+  }
 }

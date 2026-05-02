@@ -281,6 +281,8 @@ export default function AiChat() {
           subType: data.subTypeAr || data.subType || "",
         });
       }
+      console.log(response);
+      
     } catch (error) {
       console.log("status:", error.response?.status);
       console.log("data:", error.response?.data);
