@@ -1,9 +1,12 @@
-import React, { useState } from "react";
+import React from "react";
 import styles from "./AiSidebar.module.css";
 import { Link } from "react-router-dom";
 import { FaTimes, FaRobot, FaPlus, FaCommentMedical } from "react-icons/fa";
+import { useTranslation } from "react-i18next";
 
 export default function AiSidebar({ userSessions, onClose }) {
+  const { t } = useTranslation();
+
   return (
     <div className={styles.sidebar}>
       {/* Header */}
@@ -13,34 +16,33 @@ export default function AiSidebar({ userSessions, onClose }) {
           <span className={styles.brandName}>MediConnect</span>
         </div>
 
-        {/* Close button — shown on mobile via CSS */}
         <button
           className={styles.closeBtn}
           onClick={onClose}
-          aria-label="Close sidebar"
+          aria-label={t("closeSidebar")}
         >
           <FaTimes />
         </button>
       </div>
 
-      {/* New Chat CTA */}
+      {/* New Chat */}
       <Link
         to="/dashboard/ai-chat"
         className={styles.newChatBtn}
         onClick={onClose}
       >
         <FaPlus className={styles.newChatIcon} />
-        <span>New Conversation</span>
+        <span>{t("newConversation")}</span>
       </Link>
 
-      {/* Sessions list */}
-      <div className={styles.sessionsLabel}>Recent Chats</div>
+      {/* Sessions */}
+      <div className={styles.sessionsLabel}>{t("recentChats")}</div>
 
       <ul className={styles.sessionList}>
         {userSessions.length === 0 && (
           <li className={styles.emptyItem}>
             <FaCommentMedical className={styles.emptyIcon} />
-            <span>No sessions yet</span>
+            <span>{t("noSessions")}</span>
           </li>
         )}
 
@@ -49,7 +51,7 @@ export default function AiSidebar({ userSessions, onClose }) {
             session?.messages?.[0]?.content
               ?.split(" ")
               ?.slice(0, 4)
-              ?.join(" ") || "Chat Session";
+              ?.join(" ") || t("chatSession");
 
           return (
             <li key={session.id}>
@@ -61,6 +63,7 @@ export default function AiSidebar({ userSessions, onClose }) {
                 <span className={styles.sessionIconWrap}>
                   <FaRobot className={styles.sessionIcon} />
                 </span>
+
                 <span className={styles.sessionText}>{preview}…</span>
               </Link>
             </li>
@@ -71,7 +74,7 @@ export default function AiSidebar({ userSessions, onClose }) {
       {/* Footer */}
       <div className={styles.footer}>
         <span className={styles.footerDot} />
-        AI-powered medical assistant
+        {t("aiFooter")}
       </div>
     </div>
   );

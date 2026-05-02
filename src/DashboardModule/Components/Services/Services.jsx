@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
-import img from "../../../assets/images/HeaderImg/Services-Header.png";
+import DesktopImg from "../../../assets/images/HeaderImg/Services-Header.png";
+import MopileImg from "../../../assets/images/HeaderImg/Secrvices_Header_Mopile.jpeg";
 import Header from "../../../SharedModule/Components/Header/Header";
 import Map from "./Map";
 import axios from "axios";
@@ -20,7 +21,10 @@ import {
   FaBaby,
   FaBone,
 } from "react-icons/fa";
+
 import { LocationContext } from "../../../Conetxt/LocationContext/LocationContext";
+import { useTranslation } from "react-i18next";
+import useScreenSize from "../../../CustomHooks/UserScreenSize/UserScreenSize";
 
 /* =========================
    SUBTYPE CONFIG
@@ -31,55 +35,46 @@ const subTypeConfig = {
     color: "text-emerald-600",
     bg: "from-emerald-100 to-emerald-200",
   },
-
   Hospitals: {
     icon: FaHospital,
     color: "text-red-600",
     bg: "from-red-100 to-red-200",
   },
-
   Neurologists: {
     icon: FaBrain,
     color: "text-purple-600",
     bg: "from-purple-100 to-purple-200",
   },
-
   Cardiologists: {
     icon: FaHeart,
     color: "text-pink-600",
     bg: "from-pink-100 to-pink-200",
   },
-
   Ophthalmologists: {
     icon: FaEye,
     color: "text-blue-600",
     bg: "from-blue-100 to-blue-200",
   },
-
   Laboratory: {
     icon: FaMicroscope,
     color: "text-gray-700",
     bg: "from-gray-100 to-gray-200",
   },
-
   Radiology: {
     icon: FaXRay,
     color: "text-indigo-600",
     bg: "from-indigo-100 to-indigo-200",
   },
-
   Pediatricians: {
     icon: FaBaby,
     color: "text-sky-600",
     bg: "from-sky-100 to-sky-200",
   },
-
   Orthopedic: {
     icon: FaBone,
     color: "text-amber-600",
     bg: "from-amber-100 to-amber-200",
   },
-
   default: {
     icon: FaUserMd,
     color: "text-slate-600",
@@ -95,6 +90,9 @@ function getSubTypeUI(subType) {
    MAIN COMPONENT
 ========================= */
 export default function Services() {
+  const { isMobileOrTablet } = useScreenSize();
+  const { t } = useTranslation();
+
   const [mapData, setMapData] = useState([]);
   const [totaleNumOfPages, setTotaleNumOfPages] = useState(null);
   const [numOfPage, setNumOfPage] = useState(1);
@@ -103,7 +101,7 @@ export default function Services() {
   const [selectedType, setSelectedType] = useState(null);
   const [loading, setLoading] = useState(false);
 
-   const { lat, lng } = useContext(LocationContext);
+  const { lat, lng } = useContext(LocationContext);
 
   async function fetchData(lat, lng, numOfPage, selectedType) {
     try {
@@ -155,9 +153,6 @@ export default function Services() {
   //   }
   // }
 
-
-
-
   // function userLocation() {
   //   navigator.geolocation.getCurrentPosition(
   //     (position) => {
@@ -182,12 +177,10 @@ export default function Services() {
     <>
       {/* HEADER */}
       <Header
-        title1={"Healthcare Locator"}
-        title2={"The best services near you"}
-        description={
-          "Discover medical services, book appointments quickly and connect with trusted providers effortlessly"
-        }
-        imgUrl={img}
+        title1={t("homeTitle1")}
+        title2={t("homeTitle2")}
+        description={t("homeHeaderDesc")}
+        imgUrl={isMobileOrTablet ? MopileImg : DesktopImg}
       />
 
       {/* LOADING */}
@@ -201,9 +194,10 @@ export default function Services() {
           ))}
         </div>
       ) : (
-        <div className="container m-auto mb-12 mt-14">
+        <div className="container m-auto mb-12 sm:mt-[150px] md:mt-[250px] lg:mt-5">
+          {/* TITLE */}
           <h1 className="text-primaryLight font-bold text-[52px] pb-[30px]">
-            Explore
+            {t("explore")}
           </h1>
 
           {/* FILTER */}
@@ -227,39 +221,28 @@ export default function Services() {
                 return (
                   <div
                     key={i}
-                    className="group bg-white rounded-2xl overflow-hidden shadow-md border border-gray-100
-    hover:shadow-xl hover:-translate-y-2 transition-all duration-300 flex flex-col"
+                    className="group bg-white rounded-2xl overflow-hidden shadow-md border border-gray-100 hover:shadow-xl hover:-translate-y-2 transition-all duration-300 flex flex-col"
                   >
                     {/* ICON AREA */}
                     <div
                       className={`relative h-48 flex items-center justify-center bg-gradient-to-br ${ui.bg}`}
                     >
-                      {/* MAIN ICON */}
                       <Icon
                         className={`text-6xl ${ui.color} drop-shadow-sm group-hover:scale-110 transition-transform duration-300`}
                       />
 
-                      {/* ================= BADGES CONTAINER ================= */}
+                      {/* BADGES */}
                       <div className="absolute top-3 left-3 right-3 flex justify-between items-start gap-2">
-                        {/* SUBTYPE BADGE */}
-                        <div
-                          className="max-w-[70%] bg-white px-3 py-1 rounded-full 
-          text-xs flex items-center gap-1 
-          shadow-md border border-gray-200"
-                        >
+                        {/* SUBTYPE */}
+                        <div className="max-w-[70%] bg-white px-3 py-1 rounded-full text-xs flex items-center gap-1 shadow-md border border-gray-200">
                           <Icon className={ui.color} />
-
                           <span className="font-medium text-gray-800 truncate">
                             {item.subType}
                           </span>
                         </div>
 
-                        {/* DISTANCE BADGE */}
-                        <div
-                          className="bg-primaryDark text-white 
-          text-xs px-3 py-1 rounded-full 
-          font-semibold shadow-md shrink-0"
-                        >
+                        {/* DISTANCE */}
+                        <div className="bg-primaryDark text-white text-xs px-3 py-1 rounded-full font-semibold shadow-md shrink-0">
                           {item.distance.toFixed(1)} km
                         </div>
                       </div>
@@ -290,7 +273,7 @@ export default function Services() {
                           to={`/dashboard/appointment/${item.id}`}
                           className="w-full text-center bg-primaryLight text-white py-2 rounded-xl hover:bg-primaryDark transition font-medium"
                         >
-                          Book Now
+                          {t("bookNow")}
                         </Link>
 
                         <button
@@ -300,7 +283,7 @@ export default function Services() {
                           }}
                           className="w-full bg-gray-100 text-gray-700 py-2 rounded-xl hover:bg-gray-200 transition font-medium"
                         >
-                          Details
+                          {t("details")}
                         </button>
                       </div>
                     </div>
@@ -322,11 +305,11 @@ export default function Services() {
               disabled={numOfPage === 1}
               className="px-4 py-2 bg-gray-200 rounded"
             >
-              Prev
+              {t("prev")}
             </button>
 
             <span>
-              Page {numOfPage} of {totaleNumOfPages}
+              {t("page")} {numOfPage} {t("of")} {totaleNumOfPages}
             </span>
 
             <button
@@ -336,7 +319,7 @@ export default function Services() {
               disabled={numOfPage === totaleNumOfPages}
               className="px-4 py-2 bg-gray-200 rounded"
             >
-              Next
+              {t("next")}
             </button>
           </div>
         </div>

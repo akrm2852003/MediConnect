@@ -1,7 +1,10 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 
 export default function UserBooking() {
+  const { t } = useTranslation();
+
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -10,7 +13,6 @@ export default function UserBooking() {
   const [showModal, setShowModal] = useState(false);
   const [selectedId, setSelectedId] = useState(null);
 
-  // 🔹 Fetch Bookings
   async function fetchBookings() {
     try {
       const token = localStorage.getItem("token");
@@ -24,11 +26,9 @@ export default function UserBooking() {
         },
       );
 
-     setBookings(response.data.data.bookings);
-     setTotalBookings(response.data.results);
+      setBookings(response.data.data.bookings);
+      setTotalBookings(response.data.results);
     } catch (error) {
-      console.log("status:", error.response?.status);
-      console.log("data:", error.response?.data);
       setError("Something went wrong");
     } finally {
       setLoading(false);
@@ -39,32 +39,29 @@ export default function UserBooking() {
     fetchBookings();
   }, []);
 
-  // 🔹 Delete Booking
-const handleDelete = async (id) => {
-  try {
-    const token = localStorage.getItem("token");
-    setDeletingId(id);
+  const handleDelete = async (id) => {
+    try {
+      const token = localStorage.getItem("token");
+      setDeletingId(id);
 
-    await axios.delete(`https://mediconnect-api.online/api/bookings/${id}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+      await axios.delete(`https://mediconnect-api.online/api/bookings/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
-    setBookings((prev) =>
-      prev.map((b) => (b.id === id ? { ...b, status: "cancelled" } : b)),
-    );
-  } catch (error) {
-    console.log(error.response?.data);
-    alert("Failed to cancel booking");
-  } finally {
-    setDeletingId(null);
-    setShowModal(false);
-    setSelectedId(null);
-  }
-};
+      setBookings((prev) =>
+        prev.map((b) => (b.id === id ? { ...b, status: "cancelled" } : b)),
+      );
+    } catch (error) {
+      alert("Failed to cancel booking");
+    } finally {
+      setDeletingId(null);
+      setShowModal(false);
+      setSelectedId(null);
+    }
+  };
 
-  // 🎨 Status Style
   const getStatusStyle = (status) => {
     if (status === "confirmed") return "bg-green-100 text-green-700";
     if (status === "pending") return "bg-yellow-100 text-yellow-700";
@@ -72,21 +69,14 @@ const handleDelete = async (id) => {
     return "bg-gray-100 text-gray-700";
   };
 
-  // ⏳ Loading
-if (loading) {
-  return (
-    <div className="flex justify-center items-center h-screen">
-      <div className="flex flex-col items-center gap-3">
-        {/* Spinner */}
-        <div className="w-10 h-10 border-4 border-gray-200 border-t-blue-600 rounded-full animate-spin"></div>
-
-        {/* Text (اختياري) */}
-        <p className="text-gray-500 text-sm">Loading...</p>
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <p className="text-gray-500">{t("bookings.loading")}</p>
       </div>
-    </div>
-  );
-}
-  // ❌ Error
+    );
+  }
+
   if (error) {
     return (
       <div className="flex justify-center items-center h-screen text-red-500">
@@ -99,26 +89,26 @@ if (loading) {
     <div className=" md:p-8 bg-gray-50 min-h-screen">
       <div className="pt-[81px] mb-8 flex justify-center">
         <div className="bg-white shadow-md border border-gray-100 rounded-2xl px-6 py-5 flex items-center justify-between w-full max-w-3xl">
-          {/* Title */}
           <div>
             <h1 className="text-2xl md:text-3xl font-bold text-primary">
-              My Bookings
+              {t("bookings.title")}
             </h1>
             <p className="text-sm text-gray-500 mt-1">
-              Manage and track all your appointments
+              {t("bookings.subtitle")}
             </p>
           </div>
 
-          {/* Counter Badge */}
           <div className="bg-blue-50 text-blue-700 px-4 py-2 rounded-xl text-center">
-            <p className="text-xs text-gray-500">Total</p>
+            <p className="text-xs text-gray-500">{t("bookings.total")}</p>
             <p className="text-lg font-bold">{totalBookings}</p>
           </div>
         </div>
       </div>
 
       {bookings.length === 0 ? (
-        <p className="text-center text-gray-500 mt-10">No bookings found</p>
+        <p className="text-center text-gray-500 mt-10">
+          {t("bookings.noBookings")}
+        </p>
       ) : (
         <div className="container pt-[80] grid gap-5 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {bookings.map((booking) => {
@@ -130,7 +120,6 @@ if (loading) {
                 className={`bg-white rounded-2xl shadow-md hover:shadow-xl transition duration-300 p-5 flex flex-col justify-between 
                 ${isCancelled ? "opacity-60 grayscale" : ""}`}
               >
-                {/* Top */}
                 <div>
                   <h2 className="text-lg font-semibold text-gray-800 mb-1">
                     {booking.entity.name}
@@ -146,14 +135,17 @@ if (loading) {
                   </div>
 
                   <div className="mb-3">
-                    <span className="text-gray-500 text-sm">Price:</span>
+                    <span className="text-gray-500 text-sm">
+                      {t("bookings.price")}:
+                    </span>
                     <span className="ml-2 font-semibold text-gray-800">
-                      {booking.price === 0 ? "Free" : `${booking.price} EGP`}
+                      {booking.price === 0
+                        ? t("bookings.free")
+                        : `${booking.price} EGP`}
                     </span>
                   </div>
                 </div>
 
-                {/* Bottom */}
                 <div className="flex justify-between items-center mt-4">
                   <span
                     className={`px-3 py-1 text-xs rounded-full font-medium ${getStatusStyle(
@@ -187,7 +179,9 @@ if (loading) {
                           : "bg-primaryDark hover:bg-primaryDark80"
                       }`}
                     >
-                      {deletingId === booking.id ? "Cancelling..." : "Cancel"}
+                      {deletingId === booking.id
+                        ? t("bookings.cancelling")
+                        : t("bookings.cancel")}
                     </button>
                   </div>
                 </div>
@@ -200,11 +194,11 @@ if (loading) {
       {showModal && (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
           <div className="bg-white w-[90%] max-w-md rounded-2xl p-6 shadow-xl">
-            <h2 className="text-xl font-bold text-gray-800">Cancel Booking</h2>
+            <h2 className="text-xl font-bold text-gray-800">
+              {t("bookings.cancelTitle")}
+            </h2>
 
-            <p className="text-gray-500 mt-2">
-              Are you sure you want to cancel this booking?
-            </p>
+            <p className="text-gray-500 mt-2">{t("bookings.cancelText")}</p>
 
             <div className="flex justify-end gap-3 mt-6">
               <button
@@ -214,14 +208,14 @@ if (loading) {
                 }}
                 className="px-4 py-2 rounded-lg bg-gray-200 hover:bg-gray-300"
               >
-                No
+                {t("bookings.no")}
               </button>
 
               <button
                 onClick={() => handleDelete(selectedId)}
                 className="px-4 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700"
               >
-                Yes, Cancel
+                {t("bookings.yes")}
               </button>
             </div>
           </div>

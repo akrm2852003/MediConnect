@@ -4,8 +4,10 @@ import { AuthContext } from "../../../Conetxt/AuthContext/AuthContext";
 import userImg from "../../../assets/images/UserImg.png";
 import style from "./UserProfile.module.css";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 export default function UserProfile() {
+  const { t } = useTranslation();
   const { userData } = useContext(AuthContext);
   const user = userData;
   const navigate = useNavigate();
@@ -15,21 +17,21 @@ export default function UserProfile() {
   return (
     <AnimatePresence>
       <motion.div
-        className={`${style.bgImg} fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm lg:pt-[80px] `}
+        className={`${style.bgImg} fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm lg:pt-[80px]`}
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
       >
         {/* Modal */}
         <motion.div
-          className="w-full sm:h-screen lg:h-[80vh] lg:max-w-4xl  bg-white lg:rounded-2xl shadow-2xl overflow-hidden flex flex-col"
+          className="w-full sm:h-screen lg:h-[80vh] lg:max-w-4xl bg-white lg:rounded-2xl shadow-2xl overflow-hidden flex flex-col"
           initial={{ scale: 0.8, y: 40, opacity: 0 }}
           animate={{ scale: 1, y: 0, opacity: 1 }}
           transition={{ type: "spring", stiffness: 120, damping: 15 }}
         >
           {/* Header */}
           <div className="bg-gradient-to-r from-[#1B3A5D] to-[#2A6F97] p-6 text-center shrink-0">
-            <h1 className="text-3xl font-bold text-white">My Profile</h1>
+            <h1 className="text-3xl font-bold text-white">{t("myProfile")}</h1>
           </div>
 
           {/* Content */}
@@ -54,7 +56,7 @@ export default function UserProfile() {
 
               <p className="text-sm text-gray-500">{user.email}</p>
 
-              {/* زرار المواعيد */}
+              {/* Appointments Button */}
               <motion.button
                 onClick={() => navigate("/dashboard/user-bookings")}
                 whileHover={{ scale: 1.05 }}
@@ -63,7 +65,7 @@ export default function UserProfile() {
                 bg-gradient-to-r from-[#1B3A5D] to-[#2A6F97]
                 shadow-lg hover:shadow-2xl transition-all duration-300"
               >
-                View My Appointments →
+                {t("viewAppointments")} 📅
               </motion.button>
             </motion.div>
 
@@ -80,45 +82,51 @@ export default function UserProfile() {
               }}
             >
               <div className="space-y-4">
-                <AnimatedCard title="Phone" value={user.phone} />
+                <AnimatedCard title={t("phone")} value={user.phone} />
                 <AnimatedCard
-                  title="Age / Gender"
+                  title={t("ageGender")}
                   value={`${user.age} - ${user.gender}`}
                 />
-                <AnimatedCard title="National ID" value={user.national_id} />
-                <AnimatedCard title="Birth Date" value={user.birth_date} />
-                <AnimatedCard title="Occupation" value={user.occupation} />
+                <AnimatedCard
+                  title={t("nationalId")}
+                  value={user.national_id}
+                />
+                <AnimatedCard title={t("birthDate")} value={user.birth_date} />
+                <AnimatedCard title={t("occupation")} value={user.occupation} />
               </div>
 
               <div className="space-y-4">
                 <AnimatedCard
-                  title="Address"
+                  title={t("address")}
                   value={`${user.address?.street}, ${user.address?.city}`}
                 />
 
                 <AnimatedCard
-                  title="Governorate / Country"
+                  title={t("govCountry")}
                   value={`${user.address?.governorate} - ${user.address?.country}`}
                 />
 
                 <div className="grid grid-cols-2 gap-4">
-                  <AnimatedBadge title="Blood Type" value={user.blood_type} />
                   <AnimatedBadge
-                    title="Allergies"
+                    title={t("bloodType")}
+                    value={user.blood_type}
+                  />
+                  <AnimatedBadge
+                    title={t("allergies")}
                     value={
                       user.allergies?.length
                         ? user.allergies.join(", ")
-                        : "None"
+                        : t("none")
                     }
                   />
                 </div>
 
                 <AnimatedCard
-                  title="Medical History"
+                  title={t("medicalHistory")}
                   value={
                     user.medical_history?.length
                       ? user.medical_history.join(" • ")
-                      : "No data"
+                      : t("noData")
                   }
                 />
               </div>

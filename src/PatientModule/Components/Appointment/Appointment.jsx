@@ -4,8 +4,13 @@ import { useParams } from "react-router-dom";
 import styles from "./Appointment.module.css";
 import { toast } from "react-toastify";
 
+// 👇 لو عندك i18n استخدمه (زي باقي الموقع)
+import { useTranslation } from "react-i18next";
+
 export default function Appointment() {
   const { id } = useParams();
+  const { t } = useTranslation();
+
   const [details, setDetails] = useState(null);
   const [loading, setLoading] = useState(false);
   const [selectedDate, setSelectedDate] = useState(null);
@@ -21,6 +26,7 @@ export default function Appointment() {
       );
       const data = response.data.data;
       setDetails(data);
+
       if (data?.schedule?.length > 0) {
         const first = data.schedule[0].date;
         setSelectedDate(first);
@@ -28,6 +34,7 @@ export default function Appointment() {
         setViewYear(y);
         setViewMonth(m - 1);
       }
+
       setLoading(false);
     } catch (error) {
       console.log(error);
@@ -43,15 +50,13 @@ export default function Appointment() {
         { entityId: id, date: selectedDate, time: selectedTime },
         { headers: { Authorization: `Bearer ${token}` } },
       );
-      console.log(response);
-            toast.success(response.data.message, {
+
+      toast.success(response.data.message, {
         autoClose: 5000,
         theme: "light",
       });
     } catch (error) {
-      console.log("status:", error.response?.status);
-      console.log("data:", error.response?.data);
-      toast.error(error.response?.data?.message || "Booking failed", {
+      toast.error(error.response?.data?.message || t("booking_failed"), {
         autoClose: 5000,
         theme: "dark",
       });
@@ -106,29 +111,29 @@ export default function Appointment() {
     if (viewMonth === 0) {
       setViewMonth(11);
       setViewYear((y) => y - 1);
-    } else {
-      setViewMonth((m) => m - 1);
-    }
+    } else setViewMonth((m) => m - 1);
   }
 
   function nextMonth() {
     if (viewMonth === 11) {
       setViewMonth(0);
       setViewYear((y) => y + 1);
-    } else {
-      setViewMonth((m) => m + 1);
-    }
+    } else setViewMonth((m) => m + 1);
   }
 
   const calendarDays = useMemo(() => {
     if (viewYear === null) return [];
+
     const firstDay = new Date(viewYear, viewMonth, 1).getDay();
     const offset = (firstDay + 6) % 7;
     const daysInMonth = new Date(viewYear, viewMonth + 1, 0).getDate();
     const prevMonthDays = new Date(viewYear, viewMonth, 0).getDate();
+
     const days = [];
+
     for (let i = 0; i < offset; i++)
       days.push({ day: prevMonthDays - offset + 1 + i, type: "prev" });
+
     for (let d = 1; d <= daysInMonth; d++) {
       const ds = toDateStr(viewYear, viewMonth, d);
       days.push({
@@ -137,36 +142,37 @@ export default function Appointment() {
         type: scheduleDates.has(ds) ? "active" : "normal",
       });
     }
+
     return days;
   }, [viewYear, viewMonth, scheduleDates]);
 
-  if (loading) return <div className={styles.loading}>Loading...</div>;
+  if (loading) return <div className={styles.loading}>{t("loading")}</div>;
   if (!details || viewYear === null) return null;
 
   return (
-    <div className={`${styles.screen} `}>
-      {/* ===== Header ===== */}
+    <div className={styles.screen}>
+      {/* Header */}
       <div className={styles.header}>
-        <button className={styles.backBtn}>&#8592;</button>
-        <span className={styles.headerTitle}>Appointment</span>
+        <button className={styles.backBtn}>←</button>
+        <span className={styles.headerTitle}>{t("appointment_title")}</span>
       </div>
 
-      {/* ===== Body Grid ===== */}
       <div className={styles.body}>
-        {/* Calendar Section */}
+        {/* Calendar */}
         <div className={styles.calSection}>
-          <div className={styles.sectionLabel}>Date</div>
+          <div className={styles.sectionLabel}>{t("date")}</div>
 
           <div className={styles.calHeader}>
             <span className={styles.calMonth}>
-              {MONTHS[viewMonth]} {viewYear}
+              {t(MONTHS[viewMonth])} {viewYear}
             </span>
+
             <div>
               <button className={styles.calNav} onClick={prevMonth}>
-                &#8249;
+                ‹
               </button>
               <button className={styles.calNav} onClick={nextMonth}>
-                &#8250;
+                ›
               </button>
             </div>
           </div>
@@ -174,9 +180,10 @@ export default function Appointment() {
           <div className={styles.calGrid}>
             {DOWS.map((d) => (
               <div key={d} className={styles.calDow}>
-                {d}
+                {t(d)}
               </div>
             ))}
+
             {calendarDays.map((cell, i) => (
               <div
                 key={i}
@@ -199,9 +206,10 @@ export default function Appointment() {
           </div>
         </div>
 
-        {/* Slots Section */}
+        {/* Slots */}
         <div className={styles.slotsSection}>
-          <div className={styles.sectionLabel}>Available Time</div>
+          <div className={styles.sectionLabel}>{t("available_time")}</div>
+
           <div className={styles.timeGrid}>
             {selectedDay?.slots.map((slot, i) => (
               <button
@@ -230,7 +238,7 @@ export default function Appointment() {
               }
             }}
           >
-            Confirm
+            {t("confirm")}
           </button>
         </div>
       </div>

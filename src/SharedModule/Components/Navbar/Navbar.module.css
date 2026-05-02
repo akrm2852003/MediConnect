@@ -1,16 +1,12 @@
-
 :root {
-  /* Primary Blue */
   --color-primary-dark: #052755;
   --color-primary-dark-80: #052755A3;
-
-  /* Main Brand Colors */
   --color-primary: #026B98;
   --color-primary-light: #00B7EA;
   --color-primary-cyan: #00D5FF;
 }
 
-/* ========== Navbar ========== */
+/* Navbar */
 .navbar {
   width: 100%;
   position: fixed;
@@ -19,20 +15,53 @@
   background: #ffffff;
   border-bottom: 1px solid #e5e7eb;
   z-index: 100;
+
+  /* مهم جداً */
+  direction: ltr;
 }
 
-/* ========== Container ========== */
+/* Container */
 .container {
   max-width: 1200px;
   margin: auto;
   padding: 0 20px;
+
   display: flex;
   align-items: center;
   justify-content: space-between;
-  
+
+  gap: 20px;
 }
 
-/* ========== Logo Section ========== */
+/* Left */
+.left {
+  flex: 1;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  min-width: 0;
+}
+
+/* Center */
+.center {
+  flex: 2;
+  display: flex;
+  justify-content: center;
+  min-width: 0;
+}
+
+/* Right */
+.right {
+  flex: 1;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 12px;
+  white-space: nowrap;
+  min-width: 0;
+}
+
+/* Logo */
 .logoSection {
   display: flex;
   align-items: center;
@@ -43,45 +72,45 @@
   height: 70px;
 }
 
-
 .brand {
   font-size: 35px;
   font-weight: 800;
-
   background: linear-gradient(to bottom, #0f172a, #00b7ea);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
-
-/* ========== Menu ========== */
+/* Menu */
 .menu {
   display: flex;
-  gap: 30px;
+  gap: 25px;
   list-style: none;
+  padding: 0;
+  margin: 0;
+
+  align-items: center;
+  flex-wrap: nowrap;
 }
 
 .menu a {
   text-decoration: none;
   color: #026B98;
-  font-size: 23px;
+  font-size: 20px;
   font-weight: 700;
   transition: 0.2s;
 }
 
-/* Hover بسيط جدًا */
 .menu a:hover {
-  color: #026b98;
+  color: #0d6efd;
 }
 
-/* ========== Button ========== */
+/* Button */
 .btn {
   padding: 6px 16px;
-  margin-top: 7px;
   border: 1px solid #d1d5db;
   border-radius: 8px;
   background: var(--color-primary-light);
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 600;
   color: white;
   cursor: pointer;
@@ -92,14 +121,13 @@
   background: var(--color-primary-dark);
 }
 
-
-
+/* User Icon */
 .userIcon {
   font-size: 28px;
   color: #333;
-  cursor: pointer;
   display: flex;
   align-items: center;
+  cursor: pointer;
   transition: 0.2s;
 }
 
@@ -108,7 +136,24 @@
   transform: scale(1.1);
 }
 
-/* ========== Responsive ========== */
+/* Language Button */
+.langBtn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 14px;
+  transition: 0.3s;
+}
+
+.langBtn:hover {
+  color: var(--color-primary);
+}
+
+/* Responsive */
 @media (max-width: 768px) {
   .menu {
     display: none;

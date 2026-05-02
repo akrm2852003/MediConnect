@@ -1,4 +1,5 @@
 .floatingBtn {
+  
   position: fixed;
   top: 20px;
   right: 20px;
@@ -45,6 +46,7 @@
 
 /* Sidebar */
 .sidebar {
+  direction: ltr;
   position: fixed;
   top: 0;
   left: -100%;
@@ -59,7 +61,6 @@
 
   /* ✨ شكل احترافي */
   border-top-right-radius: 30px;
-
 }
 
 /* open */
@@ -111,7 +112,7 @@
 .sidebar a:hover,
 .sidebar button:hover {
   background: rgba(5, 39, 85, 1);
-  color : white
+  color: white;
 }
 
 /* icons */
