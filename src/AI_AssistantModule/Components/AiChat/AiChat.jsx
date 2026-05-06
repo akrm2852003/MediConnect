@@ -13,192 +13,81 @@ import AiSidebar from "../AiSidebar/AiSidebar";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import { LocationContext } from "../../../Conetxt/LocationContext/LocationContext";
+import ClinicBottomSheet from "../ClinicBottom/ClinicBottomSheet";
 
-// ─── Clinic Bottom Sheet ──────────────────────────────────────────────────────
-function ClinicBottomSheet({ clinics, subType, onClose }) {
-  const [filter, setFilter] = useState("all");
-  const [expanded, setExpanded] = useState(false);
+// ─── helpers للـ localStorage ───
+const CLINIC_STORAGE_KEY = (sessionId) => `clinicSheet_${sessionId}`;
 
-  const filtered = clinics.filter((c) => {
-    if (filter === "available") return c.bookingEnabled;
-    return true;
-  });
+function saveClinicSheet(sessionId, data) {
+  if (!sessionId) return;
+  try {
+    localStorage.setItem(CLINIC_STORAGE_KEY(sessionId), JSON.stringify(data));
+  } catch (_) {}
+}
 
-  const visibleClinics = expanded ? filtered : filtered.slice(0, 4);
-
-  const colors = [
-    { bg: "#E1F5EE", color: "#0F6E56" },
-    { bg: "#E6F1FB", color: "#185FA5" },
-    { bg: "#EEEDFE", color: "#534AB7" },
-    { bg: "#FAEEDA", color: "#854F0B" },
-    { bg: "#FAECE7", color: "#993C1D" },
-  ];
-
-  function getInitials(name) {
-    const clean = name
-      .replace(/^د\.?\s*/, "")
-      .trim()
-      .split(" ");
-    return clean
-      .slice(0, 2)
-      .map((p) => p[0])
-      .join("");
+function loadClinicSheet(sessionId) {
+  if (!sessionId) return null;
+  try {
+    const raw = localStorage.getItem(CLINIC_STORAGE_KEY(sessionId));
+    return raw ? JSON.parse(raw) : null;
+  } catch (_) {
+    return null;
   }
+}
+
+function clearClinicSheet(sessionId) {
+  if (!sessionId) return;
+  try {
+    localStorage.removeItem(CLINIC_STORAGE_KEY(sessionId));
+  } catch (_) {}
+}
+
+// ─── تنظيف المحتوى من المسافات الزيادة ───
+function cleanContent(content) {
+  if (!content) return "";
 
   return (
-    <div className={styles.bsOverlay}>
-      <div className={styles.bsSheet}>
-        {/* Handle + header */}
-        <div className={styles.bsTop}>
-          <div className={styles.bsHandle} />
-          <div className={styles.bsHeaderRow}>
-            <div>
-              <span className={styles.bsTitle}>
-                {filtered.length} عيادة قريبة منك
-              </span>
-              {subType && (
-                <span className={styles.bsSubType}> · {subType}</span>
-              )}
-            </div>
-            <div className={styles.bsHeaderRight}>
-              <div className={styles.bsFilters}>
-                <button
-                  className={`${styles.bsFilter} ${filter === "all" ? styles.bsFilterActive : ""}`}
-                  onClick={() => setFilter("all")}
-                >
-                  الكل
-                </button>
-                <button
-                  className={`${styles.bsFilter} ${filter === "available" ? styles.bsFilterActive : ""}`}
-                  onClick={() => setFilter("available")}
-                >
-                  المتاح فقط
-                </button>
-              </div>
-              <button className={styles.bsClose} onClick={onClose}>
-                <svg
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2.5"
-                  strokeLinecap="round"
-                >
-                  <line x1="18" y1="6" x2="6" y2="18" />
-                  <line x1="6" y1="6" x2="18" y2="18" />
-                </svg>
-              </button>
-            </div>
-          </div>
-        </div>
-
-        {/* Cards */}
-        <div className={styles.bsCards}>
-          {visibleClinics.map((clinic, i) => {
-            const palette = colors[i % colors.length];
-            const distKm =
-              clinic.distance != null
-                ? `${clinic.distance.toFixed(1)} كم`
-                : null;
-            const phone = clinic.phoneNumbers?.[0];
-            const available = clinic.bookingEnabled;
-
-            return (
-              <div key={clinic.id} className={styles.bsCard}>
-                <div
-                  className={styles.bsCardAvatar}
-                  style={{ background: palette.bg, color: palette.color }}
-                >
-                  {getInitials(clinic.name)}
-                </div>
-                <div className={styles.bsCardInfo}>
-                  <div className={styles.bsCardName}>{clinic.name}</div>
-                  <div className={styles.bsCardSub}>
-                    {clinic.area && (
-                      <>
-                        <svg
-                          width="10"
-                          height="10"
-                          viewBox="0 0 16 16"
-                          fill="none"
-                          style={{ flexShrink: 0 }}
-                        >
-                          <circle
-                            cx="8"
-                            cy="7"
-                            r="3"
-                            stroke="currentColor"
-                            strokeWidth="1.5"
-                          />
-                          <path
-                            d="M8 2C5.24 2 3 4.24 3 7c0 4 5 9 5 9s5-5 5-9c0-2.76-2.24-5-5-5z"
-                            stroke="currentColor"
-                            strokeWidth="1.5"
-                            fill="none"
-                          />
-                        </svg>
-                        {clinic.area}
-                        {distKm && ` · ${distKm}`}
-                      </>
-                    )}
-                  </div>
-                </div>
-                <div className={styles.bsCardRight}>
-                  <span
-                    className={
-                      available ? styles.bsAvailGreen : styles.bsAvailGray
-                    }
-                  >
-                    ● {available ? "متاح" : "غير متاح"}
-                  </span>
-                  <div className={styles.bsCardBtns}>
-                    {phone && (
-                      <a href={`tel:${phone}`} className={styles.bsCallBtn}>
-                        اتصل
-                      </a>
-                    )}
-                    {clinic.detailUrl && (
-                      <a
-                        href={clinic.detailUrl}
-                        target="_blank"
-                        rel="noreferrer"
-                        className={styles.bsDetailBtn}
-                      >
-                        تفاصيل
-                      </a>
-                    )}
-                  </div>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-
-        {/* Show more */}
-        {filtered.length > 4 && (
-          <button
-            className={styles.bsShowMore}
-            onClick={() => setExpanded((v) => !v)}
-          >
-            {expanded ? "عرض أقل ▲" : `عرض ${filtered.length - 4} عيادة أخرى ▼`}
-          </button>
-        )}
-      </div>
-    </div>
+    content
+      // مسح المسافات الزيادة في بداية ونهاية كل سطر
+      .split("\n")
+      .map((line) => line.trim())
+      // حذف الأسطر الفارغة المتكررة (أكتر من سطر فاضي واحد)
+      .reduce((acc, line) => {
+        const lastLine = acc[acc.length - 1];
+        if (line === "" && lastLine === "") return acc;
+        return [...acc, line];
+      }, [])
+      // حذف الأسطر الفارغة من الأول والآخر
+      .join("\n")
+      .trim()
   );
 }
 
-// ─── Main Component ───────────────────────────────────────────────────────────
 export default function AiChat() {
   const [userSessions, setUserSessions] = useState([]);
   const [messages, setMessages] = useState([]);
+  const [clinicSheet, setClinicSheet] = useState(null);
+  const [isClinicOpen, setIsClinicOpen] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [clinicSheet, setClinicSheet] = useState(null); // { clinics, subType }
 
   const navigate = useNavigate();
   const { lat, lng } = useContext(LocationContext);
   const { id } = useParams();
+
+  // ─── لما يتغير الـ id، نحمّل العيادات المخزنة لهذا الـ session ───
+  useEffect(() => {
+    // reset فوري عشان نمسح بيانات الـ session السابق
+    setClinicSheet(null);
+    setIsClinicOpen(false);
+
+    if (!id) return;
+
+    const saved = loadClinicSheet(id);
+    if (saved) {
+      setClinicSheet(saved);
+      // تبقى مغلقة، المستخدم يفتحها بالزرار
+    }
+  }, [id]);
 
   async function getAiChats() {
     try {
@@ -208,6 +97,7 @@ export default function AiChat() {
         { headers: { Authorization: `Bearer ${token}` } },
       );
       setUserSessions(response.data.data.sessions);
+      console.log(response);
     } catch (error) {
       console.log("status:", error.response?.status);
       console.log("data:", error.response?.data);
@@ -219,24 +109,28 @@ export default function AiChat() {
       setMessages([]);
       return;
     }
-  }, [id]);
+
+    const currentSession = userSessions.find((session) => session.id === id);
+
+    if (!currentSession || !currentSession.messages) {
+      setMessages([]);
+      return;
+    }
+
+    const formattedMessages = currentSession.messages.map((msg) => ({
+      message: cleanContent(msg.content),
+      sender: msg.role === "user" ? "user" : "bot",
+      direction: msg.role === "user" ? "outgoing" : "incoming",
+    }));
+
+    setMessages(formattedMessages);
+  }, [id, userSessions]);
 
   useEffect(() => {
     getAiChats();
   }, []);
 
-  useEffect(() => {
-    var currentSession = userSessions.find((session) => session.id === id);
-    if (!currentSession || !currentSession.messages) return;
-    var formattedMessages = currentSession.messages.map((msg) => ({
-      message: msg.content,
-      sender: msg.role === "user" ? "user" : "bot",
-      direction: msg.role === "user" ? "outgoing" : "incoming",
-    }));
-    setMessages(formattedMessages);
-  }, [id]);
-
-  async function handleSend(text, id) {
+  async function handleSend(text, sessionId) {
     const token = localStorage.getItem("token");
     const userMessage = {
       message: text,
@@ -248,7 +142,7 @@ export default function AiChat() {
     try {
       const response = await axios.post(
         `https://mediconnect-api.online/api/ai/unified`,
-        { session_id: id, answer: text },
+        { session_id: sessionId, answer: text },
         { headers: { Authorization: `Bearer ${token}` } },
       );
 
@@ -274,15 +168,18 @@ export default function AiChat() {
 
       setMessages((prev) => [...prev, ...messagesToAdd]);
 
-      // ─── لو في عيادات → افتح الـ bottom sheet ───
+      // ─── لو في عيادات → احفظها في localStorage وافتح الـ bottom sheet ───
       if (data.nearby_places && data.nearby_places.length > 0) {
-        setClinicSheet({
+        const sheet = {
           clinics: data.nearby_places,
           subType: data.subTypeAr || data.subType || "",
-        });
+        };
+        setClinicSheet(sheet);
+        setIsClinicOpen(true);
+        saveClinicSheet(sessionId, sheet);
       }
+
       console.log(response);
-      
     } catch (error) {
       console.log("status:", error.response?.status);
       console.log("data:", error.response?.data);
@@ -291,11 +188,13 @@ export default function AiChat() {
 
   async function handleNewChat(text, lat, lng) {
     const token = localStorage.getItem("token");
+
     const userMessage = {
       message: text,
       sender: "user",
       direction: "outgoing",
     };
+
     setMessages((prev) => [...prev, userMessage]);
 
     try {
@@ -307,6 +206,7 @@ export default function AiChat() {
 
       const data = response.data.data;
       const newSessionId = data.session_id;
+
       const botMessage = {
         message: data.next_question,
         sender: "bot",
@@ -314,7 +214,46 @@ export default function AiChat() {
       };
 
       setMessages((prev) => [...prev, botMessage]);
+
+      const newSession = {
+        id: newSessionId,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        status: "active",
+        messages: [
+          {
+            role: "user",
+            content: text,
+            image: null,
+            timestamp: new Date().toISOString(),
+          },
+          {
+            role: "ai",
+            content: data.next_question,
+            image: null,
+            timestamp: new Date().toISOString(),
+          },
+        ],
+      };
+
+      setUserSessions((prev) => [newSession, ...prev]);
+
       navigate(`/dashboard/ai-chat/${newSessionId}`);
+
+      // ─── لو في عيادات من أول رسالة ───
+      if (data.nearby_places && data.nearby_places.length > 0) {
+        const sheet = {
+          clinics: data.nearby_places,
+          subType: data.subTypeAr || data.subType || "",
+        };
+        setClinicSheet(sheet);
+        setIsClinicOpen(true);
+        saveClinicSheet(newSessionId, sheet);
+      }
+
+      setTimeout(() => {
+        getAiChats();
+      }, 2000);
     } catch (error) {
       console.log(error);
     }
@@ -402,12 +341,22 @@ export default function AiChat() {
           </MainContainer>
         </div>
 
+        {/* ─── زرار إعادة فتح العيادات ─── */}
+        {clinicSheet && !isClinicOpen && (
+          <button
+            className={styles.reopenBtn}
+            onClick={() => setIsClinicOpen(true)}
+          >
+            🏥 عرض العيادات القريبة
+          </button>
+        )}
+
         {/* ─── Full-width Bottom Sheet ─── */}
-        {clinicSheet && (
+        {clinicSheet && isClinicOpen && (
           <ClinicBottomSheet
             clinics={clinicSheet.clinics}
             subType={clinicSheet.subType}
-            onClose={() => setClinicSheet(null)}
+            onClose={() => setIsClinicOpen(false)}
           />
         )}
       </main>
