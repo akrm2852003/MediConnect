@@ -19,7 +19,7 @@ export default function Modal({ isOpen, onClose, children }) {
     <AnimatePresence>
       {isOpen && (
         <motion.div
-          className="fixed inset-0 z-[9999] flex items-center justify-center"
+          className="fixed inset-0 z-[9999] flex items-start justify-center overflow-y-auto py-6"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -33,18 +33,21 @@ export default function Modal({ isOpen, onClose, children }) {
             animate={{ scale: 1, y: 0, opacity: 1 }}
             exit={{ scale: 0.7, y: 50, opacity: 0 }}
             transition={{ duration: 0.25 }}
-            className="relative bg-white w-[92%] max-w-5xl max-h-[90vh] overflow-hidden rounded-3xl shadow-2xl p-5"
+            className="relative bg-white w-[92%] max-w-5xl max-h-[90vh] rounded-3xl shadow-2xl p-5 flex flex-col"
           >
             {/* Close button */}
             <button
               onClick={onClose}
-              className="absolute top-3 right-3 w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 hover:bg-primaryDark hover:text-white transition"
+              className="absolute top-3 right-3 w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 hover:bg-primaryDark hover:text-white transition z-10"
               aria-label={t("close")}
             >
               {t("closeIcon", { defaultValue: "✕" })}
             </button>
 
-            {children}
+            {/* Content */}
+            <div className="overflow-y-auto max-h-[calc(90vh-40px)] pr-2">
+              {children}
+            </div>
           </motion.div>
         </motion.div>
       )}

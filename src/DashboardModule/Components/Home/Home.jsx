@@ -48,20 +48,18 @@ export default function Home() {
         imgUrl={isMobileOrTablet ? MopileImg : DesktopImg}
       />
 
-      <div className="container m-auto">
-       
-
+      <div className="container   lg:w-[90%]  m-auto">
         {/* Values */}
         <div className="our-values">
           <h1 className="text-primaryLight font-bold text-[52.19px] pb-[30px] text-center">
             {t("ourValues")}
           </h1>
 
-          <div className="our-values-childs grid gap-y-12 md:grid-cols-1 lg:grid-cols-1 xl:grid-cols-2">
+          <div className="our-values-childs grid gap-y-12 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-2">
             {values.map((val, i) => (
               <div
                 key={i}
-                className={`${styles.card} child w-[80%] px-10 py-5 rounded-[16px] shadow drop-shadow-2xl m-auto text-center`}
+                className={`${styles.card} child  sm:w-[100%] md:w-[90%] lg:-[80] px-10 py-5 rounded-[16px] shadow drop-shadow-2xl m-auto text-center`}
               >
                 <div className="child-header flex items-center justify-center">
                   <img className="w-[12%] mt-3 me-3" src={val.icon} alt="" />
@@ -80,24 +78,6 @@ export default function Home() {
           </div>
 
           {/* Compassion */}
-          <div className="flex justify-center mt-12">
-            <div
-              className={`${styles.card} child sm:w-[80%] md:w-[80%] lg:w-[80%] xl:w-[40%] px-10 py-5 rounded-[16px] shadow drop-shadow-2xl m-auto text-center`}
-            >
-              <div className="child-header flex items-center justify-center">
-                <img className="w-[12%] mt-3 me-3" src={icon5} alt="" />
-                <h1 className="text-primaryLight font-semibold text-4xl">
-                  {t("compassion")}
-                </h1>
-              </div>
-
-              <div className="child-body">
-                <p className="text-primaryDark80 py-2.5 font-semibold text-lg">
-                  {t("compassionDesc")}
-                </p>
-              </div>
-            </div>
-          </div>
         </div>
 
         {/* About */}
