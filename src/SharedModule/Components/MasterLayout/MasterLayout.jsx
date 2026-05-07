@@ -8,11 +8,18 @@ import FloatingAiButton from "./FloatingAiButton";
 export default function MasterLayout() {
   const { isMobileOrTablet } = useScreenSize();
 
+  const navbarHeight = isMobileOrTablet ? 0 : 0;
+
   return (
     <>
       {isMobileOrTablet ? <MobileNavbar /> : <Navbar />}
 
-      <div>
+      <div
+        style={{
+          paddingTop: `${navbarHeight}px`,
+         
+        }}
+      >
         <Outlet />
       </div>
 

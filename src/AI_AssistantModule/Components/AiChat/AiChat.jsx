@@ -6,7 +6,7 @@ import {
   Message,
   MessageInput,
 } from "@chatscope/chat-ui-kit-react";
-
+import { useTranslation } from "react-i18next";
 import "@chatscope/chat-ui-kit-styles/dist/default/styles.min.css";
 import styles from "./AiChat.module.css";
 import AiSidebar from "../AiSidebar/AiSidebar";
@@ -69,7 +69,7 @@ export default function AiChat() {
   const [clinicSheet, setClinicSheet] = useState(null);
   const [isClinicOpen, setIsClinicOpen] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
-
+const { t } = useTranslation();
   const navigate = useNavigate();
   const { lat, lng } = useContext(LocationContext);
   const { id } = useParams();
@@ -103,7 +103,6 @@ export default function AiChat() {
       console.log("data:", error.response?.data);
     }
   }
-
   useEffect(() => {
     if (!id) {
       setMessages([]);
@@ -117,6 +116,27 @@ export default function AiChat() {
       return;
     }
 
+    // 👇 هات القديم من localStorage
+   const saved = loadClinicSheet(id);
+
+   if (
+     currentSession.nearby_places &&
+     currentSession.nearby_places.length > 0
+   ) {
+     setClinicSheet({
+       clinics: currentSession.nearby_places,
+
+       // 🔥 أهم سطر
+       subType:
+         saved?.subType || // الأولوية للـ localStorage
+         currentSession.subTypeAr ||
+         currentSession.subType ||
+         "عيادات مناسبة لحالتك",
+     });
+
+     setIsClinicOpen(false);
+   }
+
     const formattedMessages = currentSession.messages.map((msg) => ({
       message: cleanContent(msg.content),
       sender: msg.role === "user" ? "user" : "bot",
@@ -125,7 +145,6 @@ export default function AiChat() {
 
     setMessages(formattedMessages);
   }, [id, userSessions]);
-
   useEffect(() => {
     getAiChats();
   }, []);
@@ -259,107 +278,107 @@ export default function AiChat() {
     }
   }
 
-  return (
-    <div className={styles.pageWrapper}>
-      {/* Sidebar */}
-      <aside
-        className={`${styles.sidebarWrapper} ${sidebarOpen ? styles.sidebarOpen : ""}`}
+return (
+  <div className={`${styles.pageWrapper}  sm:h-screen lg:h-[80vh]`}>
+    {/* Sidebar */}
+    <aside
+      className={`${styles.sidebarWrapper} ${sidebarOpen ? styles.sidebarOpen : ""}`}
+    >
+      <AiSidebar
+        userSessions={userSessions}
+        onClose={() => setSidebarOpen(false)}
+      />
+    </aside>
+
+    {/* Main chat area */}
+    <main className={styles.chatMain}>
+      <button
+        className={styles.mobileSidebarToggle}
+        onClick={() => setSidebarOpen(true)}
+        aria-label="Open sidebar"
       >
-        <AiSidebar
-          userSessions={userSessions}
-          onClose={() => setSidebarOpen(false)}
-        />
-      </aside>
-
-      {/* Main chat area */}
-      <main className={styles.chatMain}>
-        <button
-          className={styles.mobileSidebarToggle}
-          onClick={() => setSidebarOpen(true)}
-          aria-label="Open sidebar"
+        <svg
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2.5"
+          strokeLinecap="round"
         >
-          <svg
-            width="20"
-            height="20"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2.5"
-            strokeLinecap="round"
-          >
-            <line x1="3" y1="6" x2="21" y2="6" />
-            <line x1="3" y1="12" x2="21" y2="12" />
-            <line x1="3" y1="18" x2="16" y2="18" />
-          </svg>
+          <line x1="3" y1="6" x2="21" y2="6" />
+          <line x1="3" y1="12" x2="21" y2="12" />
+          <line x1="3" y1="18" x2="16" y2="18" />
+        </svg>
+      </button>
+
+      {/* Chat */}
+      <div className={styles.chatContainer}>
+        <MainContainer className={styles.mainContainer}>
+          <ChatContainer>
+            <MessageList className={styles.messageList}>
+              {messages.length === 0 && (
+                <div className={styles.emptyState}>
+                  <div className={styles.emptyIcon}>✦</div>
+
+                  <h2 className={styles.emptyTitle}>
+                    {t("ai.how_can_i_help")}
+                  </h2>
+
+                  <p className={styles.emptySubtitle}>{t("ai.start_prompt")}</p>
+                </div>
+              )}
+
+              {messages.map((msg, index) => (
+                <Message
+                  key={index}
+                  model={{
+                    sender: msg.sender,
+                    direction: msg.direction,
+                    senderName: msg.sender,
+                  }}
+                >
+                  <Message.CustomContent>
+                    <div dangerouslySetInnerHTML={{ __html: msg.message }} />
+                  </Message.CustomContent>
+                </Message>
+              ))}
+            </MessageList>
+
+            <MessageInput
+              placeholder={t("ai.ask_placeholder")}
+              onSend={(text) => {
+                if (id) {
+                  handleSend(text, id);
+                } else {
+                  handleNewChat(text, lat, lng);
+                }
+              }}
+              className="flex justify-between items-center w-full md:w-3/5 mx-auto mb-6 px-5 py-3 bg-white border border-gray-300 rounded-full shadow-sm text-sm placeholder-gray-400 focus:border-gray-400 focus:ring-2 focus:ring-gray-200 focus:outline-none transition-all duration-200"
+            />
+          </ChatContainer>
+        </MainContainer>
+      </div>
+
+      {/* زرار إعادة فتح العيادات */}
+      {clinicSheet && !isClinicOpen && (
+        <button
+          className={styles.reopenBtn}
+          onClick={() => setIsClinicOpen(true)}
+        >
+          🏥 {t("ai.openClinics")}
         </button>
+      )}
 
-        {/* Chat */}
-        <div className={styles.chatContainer}>
-          <MainContainer className={styles.mainContainer}>
-            <ChatContainer>
-              <MessageList className={styles.messageList}>
-                {messages.length === 0 && (
-                  <div className={styles.emptyState}>
-                    <div className={styles.emptyIcon}>✦</div>
-                    <h2 className={styles.emptyTitle}>
-                      How can I help you today?
-                    </h2>
-                    <p className={styles.emptySubtitle}>
-                      Describe your symptoms or ask a medical question to get
-                      started.
-                    </p>
-                  </div>
-                )}
-                {messages.map((msg, index) => (
-                  <Message
-                    key={index}
-                    model={{
-                      sender: msg.sender,
-                      direction: msg.direction,
-                      senderName: msg.sender,
-                    }}
-                  >
-                    <Message.CustomContent>
-                      <div dangerouslySetInnerHTML={{ __html: msg.message }} />
-                    </Message.CustomContent>
-                  </Message>
-                ))}
-              </MessageList>
-
-              <MessageInput
-                placeholder="Ask about symptoms, medications, or health advice…"
-                onSend={(text) => {
-                  if (id) {
-                    handleSend(text, id);
-                  } else {
-                    handleNewChat(text, lat, lng);
-                  }
-                }}
-                className="flex justify-between items-center w-full md:w-3/5 mx-auto mb-6 px-5 py-3 bg-white border border-gray-300 rounded-full shadow-sm text-sm placeholder-gray-400 focus:border-gray-400 focus:ring-2 focus:ring-gray-200 focus:outline-none transition-all duration-200"
-              />
-            </ChatContainer>
-          </MainContainer>
-        </div>
-
-        {/* ─── زرار إعادة فتح العيادات ─── */}
-        {clinicSheet && !isClinicOpen && (
-          <button
-            className={styles.reopenBtn}
-            onClick={() => setIsClinicOpen(true)}
-          >
-            🏥 عرض العيادات القريبة
-          </button>
-        )}
-
-        {/* ─── Full-width Bottom Sheet ─── */}
-        {clinicSheet && isClinicOpen && (
-          <ClinicBottomSheet
-            clinics={clinicSheet.clinics}
-            subType={clinicSheet.subType}
-            onClose={() => setIsClinicOpen(false)}
-          />
-        )}
-      </main>
-    </div>
-  );
+      {/* Bottom Sheet */}
+      {clinicSheet && isClinicOpen && (
+        <ClinicBottomSheet
+          clinics={clinicSheet.clinics}
+          subType={clinicSheet.subType}
+          onClose={() => setIsClinicOpen(false)}
+        />
+      )}
+    </main>
+  </div>
+);
 }

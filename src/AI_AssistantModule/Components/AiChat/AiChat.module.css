@@ -41,9 +41,12 @@
 .mobileSidebarToggle {
   display: none;
   position: fixed;
-  bottom: 88px;
+
+  top: 12px;     /* بدل bottom */
   left: 16px;
-  z-index: 98;
+
+  z-index: 9999;
+
   width: 44px;
   height: 44px;
   border-radius: 50%;
@@ -51,8 +54,10 @@
   color: #fff;
   border: none;
   cursor: pointer;
+
   align-items: center;
   justify-content: center;
+
   box-shadow: 0 4px 18px rgba(5, 39, 85, 0.4);
   transition: transform 0.2s, box-shadow 0.2s;
 }
@@ -273,7 +278,6 @@ font-family: var(--font-main) !important;
 
   :global(.cs-message--outgoing .cs-message__content),
   :global(.cs-message--incoming .cs-message__content) {
-    max-width: 85% !important;
     font-size: 14px !important;
   }
 
@@ -358,19 +362,29 @@ font-family: var(--font-main) !important;
 
 .reopenBtn:hover {
   background: #026b98;
-  transform: translateY(-2px);
 }
-
 @media (max-width: 768px) {
   .reopenBtn {
-    bottom: 72px;
-    right: 12px;
+    position: fixed;
+    top: 17px;
+    left: 50%;
+    right: auto;
+    bottom: auto;
+
+    transform: translateX(-50%);
+
+    z-index: 9999;
+
     font-size: 12px;
     padding: 8px 14px;
+
+    will-change: transform;
+  }
+
+  .reopenBtn:hover {
+    transform: translateX(-50%); /* يمنع أي حركة */
   }
 }
-
-
 
 :global(.cs-message--incoming .cs-message__content) {
   direction: rtl !important;

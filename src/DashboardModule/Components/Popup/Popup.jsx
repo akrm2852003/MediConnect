@@ -1,6 +1,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
+import ReactDOM from "react-dom";
 
 export default function Modal({ isOpen, onClose, children }) {
   const { t } = useTranslation();
@@ -14,11 +15,11 @@ export default function Modal({ isOpen, onClose, children }) {
     return () => window.removeEventListener("keydown", handleEsc);
   }, [onClose]);
 
-  return (
+  return ReactDOM.createPortal(
     <AnimatePresence>
       {isOpen && (
         <motion.div
-          className="fixed inset-0 z-50 pt-[100px] flex items-center justify-center"
+          className="fixed inset-0 z-[9999] flex items-center justify-center"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -32,7 +33,7 @@ export default function Modal({ isOpen, onClose, children }) {
             animate={{ scale: 1, y: 0, opacity: 1 }}
             exit={{ scale: 0.7, y: 50, opacity: 0 }}
             transition={{ duration: 0.25 }}
-            className="relative sm:h-[100vh] md:h-[85vh] bg-white w-[90%] max-w-5xl max-h-[90vh] overflow-y-auto rounded-xl p-5"
+            className="relative bg-white w-[92%] max-w-5xl max-h-[90vh] overflow-hidden rounded-3xl shadow-2xl p-5"
           >
             {/* Close button */}
             <button
@@ -47,6 +48,7 @@ export default function Modal({ isOpen, onClose, children }) {
           </motion.div>
         </motion.div>
       )}
-    </AnimatePresence>
+    </AnimatePresence>,
+    document.body,
   );
 }

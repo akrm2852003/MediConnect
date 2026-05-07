@@ -2,8 +2,12 @@ import React, { useEffect, useState } from "react";
 import img from "../../../assets/Logos/MainLogo.svg";
 import { useTranslation } from "react-i18next";
 import axios from "axios";
+import { useParams } from "react-router-dom";
 
 export default function Details({ id }) {
+
+
+
   const { t } = useTranslation();
 
   const [details, setDetails] = useState(null);

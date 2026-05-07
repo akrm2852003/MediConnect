@@ -1,9 +1,17 @@
 import React, { useState } from "react";
 import styles from "./ClinicBottomSheet.module.css";
+import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
+import Modal from "../../../DashboardModule/Components/Popup/Popup";
+import Details from "../../../DashboardModule/Components/Details/Details";
 
 export default function ClinicBottomSheet({ clinics, subType, onClose }) {
+  const { t } = useTranslation();
+
   const [filter, setFilter] = useState("all");
   const [expanded, setExpanded] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [selectedId, setSelectedId] = useState(null);
 
   const filtered = clinics.filter((c) => {
     if (filter === "available") return c.bookingEnabled;
@@ -37,30 +45,39 @@ export default function ClinicBottomSheet({ clinics, subType, onClose }) {
         {/* Handle + header */}
         <div className={styles.bsTop}>
           <div className={styles.bsHandle} />
+
           <div className={styles.bsHeaderRow}>
             <div>
               <span className={styles.bsTitle}>
-                {filtered.length} عيادة قريبة منك
+                {t("clinics_nearby", { count: filtered.length })}
               </span>
+
               {subType && (
                 <span className={styles.bsSubType}> · {subType}</span>
               )}
             </div>
+
             <div className={styles.bsHeaderRight}>
               <div className={styles.bsFilters}>
                 <button
-                  className={`${styles.bsFilter} ${filter === "all" ? styles.bsFilterActive : ""}`}
+                  className={`${styles.bsFilter} ${
+                    filter === "all" ? styles.bsFilterActive : ""
+                  }`}
                   onClick={() => setFilter("all")}
                 >
-                  الكل
+                  {t("all")}
                 </button>
+
                 <button
-                  className={`${styles.bsFilter} ${filter === "available" ? styles.bsFilterActive : ""}`}
+                  className={`${styles.bsFilter} ${
+                    filter === "available" ? styles.bsFilterActive : ""
+                  }`}
                   onClick={() => setFilter("available")}
                 >
-                  المتاح فقط
+                  {t("available_only")}
                 </button>
               </div>
+
               <button className={styles.bsClose} onClick={onClose}>
                 <svg
                   width="16"
@@ -98,8 +115,10 @@ export default function ClinicBottomSheet({ clinics, subType, onClose }) {
                 >
                   {getInitials(clinic.name)}
                 </div>
+
                 <div className={styles.bsCardInfo}>
                   <div className={styles.bsCardName}>{clinic.name}</div>
+
                   <div className={styles.bsCardSub}>
                     {clinic.area && (
                       <>
@@ -124,36 +143,41 @@ export default function ClinicBottomSheet({ clinics, subType, onClose }) {
                             fill="none"
                           />
                         </svg>
+
                         {clinic.area}
                         {distKm && ` · ${distKm}`}
                       </>
                     )}
                   </div>
                 </div>
+
                 <div className={styles.bsCardRight}>
                   <span
                     className={
                       available ? styles.bsAvailGreen : styles.bsAvailGray
                     }
                   >
-                    ● {available ? "متاح" : "غير متاح"}
+                    ● {available ? t("available") : t("not_available")}
                   </span>
+
                   <div className={styles.bsCardBtns}>
-                    {phone && (
-                      <a href={`tel:${phone}`} className={styles.bsCallBtn}>
-                        اتصل
-                      </a>
-                    )}
-                    {clinic.detailUrl && (
-                      <a
-                        href={clinic.detailUrl}
-                        target="_blank"
-                        rel="noreferrer"
-                        className={styles.bsDetailBtn}
-                      >
-                        تفاصيل
-                      </a>
-                    )}
+                    
+                    <Link
+                      to={`/dashboard/appointment/${clinic.id}`}
+                      className={styles.bsCallBtn}
+                    >
+                      {t("book_now")}
+                    </Link>
+
+                    <button
+                      onClick={() => {
+                        setSelectedId(clinic.id);
+                        setOpen(true);
+                      }}
+                      className={styles.bsDetailBtn}
+                    >
+                      {t("details")}
+                    </button>
                   </div>
                 </div>
               </div>
@@ -161,13 +185,22 @@ export default function ClinicBottomSheet({ clinics, subType, onClose }) {
           })}
         </div>
 
+        {/* MODAL */}
+        <Modal isOpen={open} onClose={() => setOpen(false)}>
+          <Details id={selectedId} />
+        </Modal>
+
         {/* Show more */}
         {filtered.length > 4 && (
           <button
             className={styles.bsShowMore}
             onClick={() => setExpanded((v) => !v)}
           >
-            {expanded ? "عرض أقل ▲" : `عرض ${filtered.length - 4} عيادة أخرى ▼`}
+            {expanded
+              ? t("show_less")
+              : t("show_more", {
+                  count: filtered.length - 4,
+                })}
           </button>
         )}
       </div>

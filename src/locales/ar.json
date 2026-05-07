@@ -117,6 +117,32 @@
   "Sa": "السبت",
   "Su": "الأحد",
    "ai": {
-    "ask_ai": "اسأل الذكاء الاصطناعي"
-  }
+    "ask_ai": "اسأل الذكاء الاصطناعي",
+    "close": "إغلاق",
+  "closeIcon": "إغلاق",
+  "clinics_nearby": "{{count}} عيادة قريبة منك",
+  "suitable_specialty": "مناسبة لحالتك",
+  "all": "الكل",
+  "available_only": "المتاح فقط",
+  "available": "متاح",
+  "not_available": "غير متاح",
+  "Book Now": "احجز الان",
+  "details": "تفاصيل",
+  "show_more": "عرض {{count}} عيادة أخرى",
+  "show_less": "عرض أقل",
+  "how_can_i_help": "كيف يمكنني مساعدتك اليوم؟",
+  "start_prompt": "صف الأعراض أو اطرح سؤال طبي للبدء",
+  "ask_placeholder": "اسأل عن الأعراض أو الأدوية أو النصائح الطبية…",
+      "openClinics": "فتح العيادات"
+
+  },
+   "clinics_nearby": "{{count}} عيادة بالقرب منك",
+  "all": "الكل",
+  "available_only": "المتاح فقط",
+  "available": "متاح",
+  "not_available": "غير متاح",
+  "details": "التفاصيل",
+  "show_more": "عرض {{count}} عيادات أخرى",
+  "show_less": "عرض أقل",
+  "book_now": "احجز الآن"
 }

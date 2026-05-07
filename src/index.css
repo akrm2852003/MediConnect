@@ -6,6 +6,7 @@
   padding: 0;
   margin: 0;
   box-sizing: border-box;
+  direction: ltr  !important;
 }
 :root {
   /* Primary Blue */
@@ -16,4 +17,18 @@
   --color-primary: #026B98;
   --color-primary-light: #00B7EA;
   --color-primary-cyan: #00D5FF;
+  --navbar-height: 64px;
+
+}
+
+
+
+.pageWrapper {
+  padding-top: var(--navbar-height);
+}
+
+@media (max-width: 1024px) {
+  :root {
+    --navbar-height: 56px;
+  }
 }

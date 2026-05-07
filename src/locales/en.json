@@ -117,7 +117,35 @@
   "Fr": "Fr",
   "Sa": "Sa",
   "Su": "Su",
-  "ai": {
-    "ask_ai": "Ask AI Assistant"
-  }
+ "ai": {
+    "ask_ai": "Ask AI Assistant",
+    "close": "Close",
+    "closeIcon": "Close",
+    "clinics_nearby": "{{count}} clinics near you",
+    "suitable_specialty": "Suitable for your condition",
+    "all": "All",
+    "available_only": "Available only",
+    "available": "Available",
+    "not_available": "Not available",
+    "book_now": "Book Now",
+    "details": "Details",
+    "show_more": "Show {{count}} more clinics",
+    "show_less": "Show less",
+    "how_can_i_help": "How can I help you today?",
+    "start_prompt": "Describe your symptoms or ask a medical question to get started.",
+    "ask_placeholder": "Ask about symptoms, medications, or health advice…",
+        "openClinics": "Open Clinics"
+
+  },
+  "clinics_nearby": "{{count}} clinics near you",
+  "all": "All",
+  "available_only": "Available only",
+  "available": "Available",
+  "not_available": "Not available",
+  "details": "Details",
+  "show_more": "Show {{count}} more clinics",
+  "show_less": "Show less",
+  "book_now": "Book Now"
+
+  
 }
