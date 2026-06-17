@@ -69,6 +69,7 @@ export default function AiChat() {
   const [clinicSheet, setClinicSheet] = useState(null);
   const [isClinicOpen, setIsClinicOpen] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [isTyping, setIsTyping] = useState(false);
 const { t } = useTranslation();
   const navigate = useNavigate();
   const { lat, lng } = useContext(LocationContext);
@@ -149,134 +150,127 @@ const { t } = useTranslation();
     getAiChats();
   }, []);
 
-  async function handleSend(text, sessionId) {
-    const token = localStorage.getItem("token");
-    const userMessage = {
-      message: text,
-      sender: "user",
-      direction: "outgoing",
-    };
-    setMessages((prev) => [...prev, userMessage]);
+function showMessage(fullText) {
+  setMessages((prev) => [
+    ...prev,
+    {
+      message: fullText,
+      sender: "bot",
+      direction: "incoming",
+    },
+  ]);
+}
 
-    try {
-      const response = await axios.post(
-        `https://mediconnect-api.online/api/ai/unified`,
-        { session_id: sessionId, answer: text },
-        { headers: { Authorization: `Bearer ${token}` } },
-      );
+async function handleSend(text, sessionId) {
+  const token = localStorage.getItem("token");
 
-      const data = response.data.data;
-      const messagesToAdd = [];
-      const mainMessage = data.next_question || data.final_diagnosis;
+  const userMessage = {
+    message: text,
+    sender: "user",
+    direction: "outgoing",
+  };
 
-      if (mainMessage) {
-        messagesToAdd.push({
-          message: mainMessage,
-          sender: "bot",
-          direction: "incoming",
-        });
-      }
+  setMessages((prev) => [...prev, userMessage]);
 
-      if (!mainMessage) {
-        messagesToAdd.push({
-          message: "تم انتهاء المحادثة",
-          sender: "bot",
-          direction: "incoming",
-        });
-      }
+  setIsTyping(true); // 👈 يظهر typing
 
-      setMessages((prev) => [...prev, ...messagesToAdd]);
+  try {
+    const response = await axios.post(
+      `https://mediconnect-api.online/api/ai/unified`,
+      { session_id: sessionId, answer: text },
+      { headers: { Authorization: `Bearer ${token}` } },
+    );
 
-      // ─── لو في عيادات → احفظها في localStorage وافتح الـ bottom sheet ───
-      if (data.nearby_places && data.nearby_places.length > 0) {
-        const sheet = {
-          clinics: data.nearby_places,
-          subType: data.subTypeAr || data.subType || "",
-        };
-        setClinicSheet(sheet);
-        setIsClinicOpen(true);
-        saveClinicSheet(sessionId, sheet);
-      }
+    const data = response.data.data;
+    const mainMessage = data.next_question || data.final_diagnosis;
 
-      console.log(response);
-    } catch (error) {
-      console.log("status:", error.response?.status);
-      console.log("data:", error.response?.data);
+    setIsTyping(false); // 👈 يختفي typing فور الرد
+
+    if (mainMessage) {
+      showMessage(mainMessage); // 👈 رسالة كاملة مرة واحدة
+    } else {
+      showMessage("تم انتهاء المحادثة");
     }
-  }
 
-  async function handleNewChat(text, lat, lng) {
-    const token = localStorage.getItem("token");
-
-    const userMessage = {
-      message: text,
-      sender: "user",
-      direction: "outgoing",
-    };
-
-    setMessages((prev) => [...prev, userMessage]);
-
-    try {
-      const response = await axios.post(
-        `https://mediconnect-api.online/api/ai/unified`,
-        { question: text, latitude: lat, longitude: lng },
-        { headers: { Authorization: `Bearer ${token}` } },
-      );
-
-      const data = response.data.data;
-      const newSessionId = data.session_id;
-
-      const botMessage = {
-        message: data.next_question,
-        sender: "bot",
-        direction: "incoming",
+    if (data.nearby_places?.length > 0) {
+      const sheet = {
+        clinics: data.nearby_places,
+        subType: data.subTypeAr || data.subType || "",
       };
 
-      setMessages((prev) => [...prev, botMessage]);
+      setClinicSheet(sheet);
+      setIsClinicOpen(true);
+      saveClinicSheet(sessionId, sheet);
+    }
+  } catch (error) {
+    setIsTyping(false);
+    console.log(error);
+  }
+}
 
-      const newSession = {
-        id: newSessionId,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-        status: "active",
-        messages: [
-          {
-            role: "user",
-            content: text,
-            image: null,
-            timestamp: new Date().toISOString(),
-          },
-          {
-            role: "ai",
-            content: data.next_question,
-            image: null,
-            timestamp: new Date().toISOString(),
-          },
-        ],
+async function handleNewChat(text, lat, lng) {
+  const token = localStorage.getItem("token");
+
+  const userMessage = {
+    message: text,
+    sender: "user",
+    direction: "outgoing",
+  };
+
+  setMessages((prev) => [...prev, userMessage]);
+
+  setIsTyping(true); // 👈 typing يبدأ
+
+  try {
+    const response = await axios.post(
+      `https://mediconnect-api.online/api/ai/unified`,
+      { question: text, latitude: lat, longitude: lng },
+      { headers: { Authorization: `Bearer ${token}` } },
+    );
+
+    const data = response.data.data;
+
+    setIsTyping(false); // 👈 يختفي
+
+    showMessage(data.next_question); // 👈 رسالة كاملة
+
+    const newSessionId = data.session_id;
+
+    const newSession = {
+      id: newSessionId,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      status: "active",
+      messages: [
+        {
+          role: "user",
+          content: text,
+        },
+        {
+          role: "ai",
+          content: data.next_question,
+        },
+      ],
+    };
+
+    setUserSessions((prev) => [newSession, ...prev]);
+    navigate(`/dashboard/ai-chat/${newSessionId}`);
+
+    if (data.nearby_places?.length > 0) {
+      const sheet = {
+        clinics: data.nearby_places,
+        subType: data.subTypeAr || data.subType || "",
       };
 
-      setUserSessions((prev) => [newSession, ...prev]);
-
-      navigate(`/dashboard/ai-chat/${newSessionId}`);
-
-      // ─── لو في عيادات من أول رسالة ───
-      if (data.nearby_places && data.nearby_places.length > 0) {
-        const sheet = {
-          clinics: data.nearby_places,
-          subType: data.subTypeAr || data.subType || "",
-        };
-        setClinicSheet(sheet);
-        setIsClinicOpen(true);
-        saveClinicSheet(newSessionId, sheet);
-      }
-
-      setTimeout(() => {
-        getAiChats();
-      }, 2000);
-    } catch (error) {
-      console.log(error);
+      setClinicSheet(sheet);
+      setIsClinicOpen(true);
+      saveClinicSheet(newSessionId, sheet);
     }
+  } catch (error) {
+    setIsTyping(false);
+    console.log(error);
   }
+}
 
 return (
   <div className={`${styles.pageWrapper}  sm:h-screen lg:h-[80vh]`}>
@@ -317,25 +311,12 @@ return (
         <MainContainer className={styles.mainContainer}>
           <ChatContainer>
             <MessageList className={styles.messageList}>
-              {messages.length === 0 && (
-                <div className={styles.emptyState}>
-                  <div className={styles.emptyIcon}>✦</div>
-
-                  <h2 className={styles.emptyTitle}>
-                    {t("ai.how_can_i_help")}
-                  </h2>
-
-                  <p className={styles.emptySubtitle}>{t("ai.start_prompt")}</p>
-                </div>
-              )}
-
               {messages.map((msg, index) => (
                 <Message
                   key={index}
                   model={{
                     sender: msg.sender,
                     direction: msg.direction,
-                    senderName: msg.sender,
                   }}
                 >
                   <Message.CustomContent>
@@ -343,8 +324,25 @@ return (
                   </Message.CustomContent>
                 </Message>
               ))}
-            </MessageList>
 
+              {/* 👇 typing الوحيد */}
+              {isTyping && (
+                <Message
+                  model={{
+                    sender: "bot",
+                    direction: "incoming",
+                  }}
+                >
+                  <Message.CustomContent>
+                    <div className={styles.typing}>
+                      <span></span>
+                      <span></span>
+                      <span></span>
+                    </div>
+                  </Message.CustomContent>
+                </Message>
+              )}
+            </MessageList>
             <MessageInput
               placeholder={t("ai.ask_placeholder")}
               onSend={(text) => {
