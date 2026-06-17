@@ -82,8 +82,72 @@ const subTypeConfig = {
   },
 };
 
+const arabicToConfigKey = {
+  "أطباء القلب": "Cardiologists",
+  "جراحة القلب والصدر": "Cardiologists",
+  "أطباء العيون": "Ophthalmologists",
+  "جراحة العيون": "Ophthalmologists",
+  "أطباء الأعصاب": "Neurologists",
+  "جراحة المخ والأعصاب": "Neurologists",
+  "أطباء الطب النفسي والأعصاب": "Neurologists",
+  "أطباء العظام": "Orthopedic",
+  "جراحة العظام": "Orthopedic",
+  "أطباء الأطفال": "Pediatricians",
+  "جراحة الأطفال": "Pediatricians",
+  صيدليات: "Pharmacies",
+  "شركات الأدوية": "Pharmacies",
+  مستشفيات: "Hospitals",
+  "مراكز طبية": "Hospitals",
+  "معامل تحاليل": "Laboratory",
+  "مراكز الأشعة": "Radiology",
+  "أطباء الباطنة": "default",
+  "أطباء الباطنة والكلى": "default",
+  "أطباء الجهاز الهضمي والكبد": "default",
+  "أطباء الحساسية والمناعة الصدرية": "default",
+  "أطباء المناعة والروماتيزم": "default",
+  "أطباء أمراض الدم والمناعة": "default",
+  "أطباء النساء والتوليد": "default",
+  "أطباء المسالك البولية": "default",
+  "أطباء الأنف والأذن والحنجرة": "default",
+  "أطباء السمع والتخاطب": "default",
+  "أطباء التغذية والتخسيس": "default",
+  "أطباء الأورام": "default",
+  "أطباء ومراكز تجميل": "default",
+  "أمراض جلدية وتناسلية وعقم": "default",
+  "الجراحة العامة": "default",
+  "جراحة المناظير": "default",
+  "جراحة الأورام": "default",
+  "جراحة التجميل": "default",
+  "جراحة الأوعية الدموية": "default",
+  "جراحو الأوعية الدموية": "default",
+  "أطباء الأسنان": "default",
+  "العلاج الطبيعي": "default",
+  "شركات الأجهزة الطبية": "default",
+  "طب بيطري": "default",
+};
+
 function getSubTypeUI(subType) {
-  return subTypeConfig[subType] || subTypeConfig.default;
+  if (!subType) return subTypeConfig.default;
+
+  // 🟢 حل أهم مشكلة (المسافات)
+  const normalized = subType.trim();
+
+  // 1. exact match
+  if (subTypeConfig[normalized]) return subTypeConfig[normalized];
+
+  // 2. Arabic mapping
+  const mappedKey = arabicToConfigKey[normalized];
+  if (mappedKey) return subTypeConfig[mappedKey] || subTypeConfig.default;
+
+  // 3. case-insensitive
+  const lower = normalized.toLowerCase();
+  const match = Object.keys(subTypeConfig).find(
+    (key) => key.toLowerCase() === lower,
+  );
+
+  if (match) return subTypeConfig[match];
+
+  return subTypeConfig.default;
 }
 
 /* =========================
@@ -101,26 +165,32 @@ export default function Services() {
   const [selectedType, setSelectedType] = useState(null);
   const [loading, setLoading] = useState(false);
 
+  // filterMode: "nearby" | "filter"
+  const [filterMode, setFilterMode] = useState("nearby");
+  const [filterParams, setFilterParams] = useState({
+    subType: "",
+    governorate: "",
+    area: "",
+  });
+
   const { lat, lng } = useContext(LocationContext);
 
-  async function fetchData(lat, lng, numOfPage, selectedType) {
+  /* ── Fetch nearby (with optional subType from slider) ── */
+  async function fetchNearby(lat, lng, page, subType) {
     try {
       setLoading(true);
-
       const response = await axios.get(
         "https://mediconnect-api.online/api/entities/nearby",
         {
           params: {
             lat,
             lng,
-            subType: selectedType,
-            page: numOfPage - 1,
+            subType: subType || undefined,
+            page: page - 1,
           },
         },
       );
-
       setTotaleNumOfPages(Math.ceil(response.data.totalResults / 50));
-
       setMapData(response.data.data);
     } catch (error) {
       console.log(error?.response?.data?.message);
@@ -129,49 +199,56 @@ export default function Services() {
     }
   }
 
-  // async function filterData(governorate, subType, area) {
-  //   try {
-  //     setLoading(true);
-
-  //     const response = await axios.get(
-  //       "https://mediconnect-api.online/api/entities/filter",
-  //       {
-  //         params: {
-  //           governorate,
-  //           subType,
-  //           area,
-  //         },
-  //       },
-  //     );
-
-  //     setMapData(response.data.data);
-
-  //     setLoading(false);
-  //   } catch (error) {
-  //     console.log(error?.response?.data?.message);
-  //     setLoading(false);
-  //   }
-  // }
-
-  // function userLocation() {
-  //   navigator.geolocation.getCurrentPosition(
-  //     (position) => {
-  //       setLat(position.coords.latitude);
-  //       setLng(position.coords.longitude);
-  //     },
-  //     (err) => console.log(err.message),
-  //   );
-  // }
-
-  // useEffect(() => {
-  //   userLocation();
-  // }, []);
-
-  useEffect(() => {
-    if (lat && lng) {
-      fetchData(lat, lng, numOfPage, selectedType);
+  /* ── Fetch by filter (governorate / area / subType) ── */
+  async function fetchFiltered(params) {
+    try {
+      setLoading(true);
+      const response = await axios.get(
+        "https://mediconnect-api.online/api/entities/filter",
+        {
+          params: {
+            subType: params.subType || undefined,
+            governorate: params.governorate || undefined,
+            area: params.area || undefined,
+          },
+        },
+      );
+      setTotaleNumOfPages(null); // filter endpoint may not paginate
+      setMapData(response.data.data);
+    } catch (error) {
+      console.log(error?.response?.data?.message);
+    } finally {
+      setLoading(false);
     }
-  }, [lat, lng, numOfPage, selectedType]);
+  }
+
+  /* ── Handler called by Slider when user picks a subType pill ── */
+  function handleTypeSelect(type) {
+    setSelectedType(type);
+    setFilterMode("nearby");
+    setNumOfPage(1);
+  }
+
+  /* ── Handler called by Slider when user applies advanced filters ── */
+  function handleFilterApply(params) {
+    setFilterParams(params);
+    setFilterMode("filter");
+    setNumOfPage(1);
+
+    // Also sync selectedType so the pill stays highlighted if subType was chosen
+    setSelectedType(params.subType || null);
+  }
+
+  /* ── Main effect: re-fetch whenever mode/params change ── */
+  useEffect(() => {
+    if (filterMode === "filter") {
+      fetchFiltered(filterParams);
+    } else {
+      if (lat && lng) {
+        fetchNearby(lat, lng, numOfPage, selectedType);
+      }
+    }
+  }, [lat, lng, numOfPage, selectedType, filterMode, filterParams]);
 
   return (
     <>
@@ -194,7 +271,7 @@ export default function Services() {
           ))}
         </div>
       ) : (
-        <div className="container m-auto mb-12 ">
+        <div className="container p-[50px] m-auto mb-12">
           {/* TITLE */}
           <h1 className="text-primaryLight font-bold text-[52px] pb-[30px]">
             {t("explore")}
@@ -203,8 +280,9 @@ export default function Services() {
           {/* FILTER */}
           <div className="mb-14 sm:w-full lg:w-[80%] m-auto">
             <Slider
-              setSelectedType={setSelectedType}
+              setSelectedType={handleTypeSelect}
               selectedType={selectedType}
+              onFilterApply={handleFilterApply}
             />
           </div>
 
@@ -241,10 +319,12 @@ export default function Services() {
                           </span>
                         </div>
 
-                        {/* DISTANCE */}
-                        <div className="bg-primaryDark text-white text-xs px-3 py-1 rounded-full font-semibold shadow-md shrink-0">
-                          {item.distance.toFixed(1)} km
-                        </div>
+                        {/* DISTANCE (only available in nearby mode) */}
+                        {item.distance != null && (
+                          <div className="bg-primaryDark text-white text-xs px-3 py-1 rounded-full font-semibold shadow-md shrink-0">
+                            {item.distance.toFixed(1)} km
+                          </div>
+                        )}
                       </div>
                     </div>
 
@@ -298,30 +378,32 @@ export default function Services() {
             <Details id={selectedId} />
           </Modal>
 
-          {/* PAGINATION */}
-          <div className="flex items-center justify-center gap-3 mt-6">
-            <button
-              onClick={() => setNumOfPage((p) => Math.max(p - 1, 1))}
-              disabled={numOfPage === 1}
-              className="px-4 py-2 bg-gray-200 rounded"
-            >
-              {t("prev")}
-            </button>
+          {/* PAGINATION — shown only for nearby mode (filter endpoint may not paginate) */}
+          {filterMode === "nearby" && totaleNumOfPages > 1 && (
+            <div className="flex items-center justify-center gap-3 mt-6">
+              <button
+                onClick={() => setNumOfPage((p) => Math.max(p - 1, 1))}
+                disabled={numOfPage === 1}
+                className="px-4 py-2 bg-gray-200 rounded disabled:opacity-50"
+              >
+                {t("prev")}
+              </button>
 
-            <span>
-              {t("page")} {numOfPage} {t("of")} {totaleNumOfPages}
-            </span>
+              <span>
+                {t("page")} {numOfPage} {t("of")} {totaleNumOfPages}
+              </span>
 
-            <button
-              onClick={() =>
-                setNumOfPage((p) => (p < totaleNumOfPages ? p + 1 : p))
-              }
-              disabled={numOfPage === totaleNumOfPages}
-              className="px-4 py-2 bg-gray-200 rounded"
-            >
-              {t("next")}
-            </button>
-          </div>
+              <button
+                onClick={() =>
+                  setNumOfPage((p) => (p < totaleNumOfPages ? p + 1 : p))
+                }
+                disabled={numOfPage === totaleNumOfPages}
+                className="px-4 py-2 bg-gray-200 rounded disabled:opacity-50"
+              >
+                {t("next")}
+              </button>
+            </div>
+          )}
         </div>
       )}
     </>

@@ -13,7 +13,7 @@ import { useTranslation } from "react-i18next";
 import useScreenSize from "../../../CustomHooks/UserScreenSize/UserScreenSize";
 
 export default function Home() {
-    const { isMobileOrTablet } = useScreenSize();
+  const { isMobileOrTablet } = useScreenSize();
   const { t } = useTranslation();
 
   const values = [
@@ -48,7 +48,7 @@ export default function Home() {
         imgUrl={isMobileOrTablet ? MopileImg : DesktopImg}
       />
 
-      <div className="container   lg:w-[90%]  m-auto">
+      <div className="container   lg:w-[80%]  m-auto">
         {/* Values */}
         <div className="our-values">
           <h1 className="text-primaryLight font-bold text-[52.19px] pb-[30px] text-center">
