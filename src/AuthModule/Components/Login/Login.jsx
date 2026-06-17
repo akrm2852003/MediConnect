@@ -40,7 +40,7 @@ function Login() {
       navigate("/dashboard");
       console.log(response);
 
-      toast.success("Register successful");
+      toast.success("Login successful");
     } catch (error) {
       toast.error(error.response.data.message, {
         autoClose: 5000,
