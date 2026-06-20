@@ -45,7 +45,8 @@ function Register() {
       toast.success("Register successful");
     } catch (error) {
       navigate("/login");
-     
+           toast.success("Register successful");
+
       console.log(error);
       
       toast.error(error.response.data.message, {
