@@ -56,10 +56,11 @@ export default function Appointment() {
         theme: "light",
       });
     } catch (error) {
-      toast.error(error.response?.data?.message || t("booking_failed"), {
+      toast.error(error.response?.data?.message || t("booking_Success"), {
         autoClose: 5000,
         theme: "dark",
       });
+      
     }
   }
 
